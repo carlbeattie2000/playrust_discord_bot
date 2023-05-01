@@ -80,7 +80,7 @@
             pairBtn.addEventListener('click', async () => {
                 if (pairTokenInput.value === '') return;
 
-                await fetch('http://localhost:4088/rust_auth_register?token='+pairTokenInput.value, {
+                await fetch('http://localhost:4088/rust_auth_register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
