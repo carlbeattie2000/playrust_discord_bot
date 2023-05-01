@@ -7,6 +7,8 @@ export const roll: Command = {
         .setName('roll')
         .setDescription('Roll a random number'),
     run: async (interaction) => {
-        await interaction.reply(Math.floor(Math.random() * 100).toString());
+        const rndNumber = Math.floor(Math.random() * 100).toString();
+
+        await interaction.reply(rndNumber);
     }
 }

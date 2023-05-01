@@ -1,9 +1,18 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+import { onInteraction } from './events/on_interaction';
+import { onReady } from './events/on_ready';
 
-client.once(Events.ClientReady, client => {
+const BOT = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+BOT.once(Events.ClientReady, async client => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
+
+    await onReady(BOT);
 })
 
-client.login(process.env.DISCORD_TOKEN);
+BOT.on(Events.InteractionCreate, async (interaction) => {
+    await onInteraction(interaction)
+})
+
+BOT.login(process.env.DISCORD_TOKEN);
