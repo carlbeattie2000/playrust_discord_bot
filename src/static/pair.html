@@ -1,0 +1,91 @@
+<html lang="en">
+    <head>
+        <title>RustPlus Auth</title>
+    </head>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 62.5%;
+        }
+
+        body {
+            font-size: 1.6rem;
+            font-family: arial;
+            margin: 1.5rem;
+        }
+
+        .warning-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid orange;
+            padding: 1rem;
+            border-radius: .5rem;
+            text-align: center;
+        }
+
+        .warning-container > p {
+            font-size: 2.5rem;
+        }
+
+        .manual-token {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .manual-token > input {
+            padding: .5rem;
+            border: .1rem solid #000;
+            border-radius: .2rem;
+            font-size: 1.8rem;
+        }
+
+        .manual-token > button {
+            padding: .5rem;
+            font-size: 1.8rem;
+            background-color: transparent;
+            color: #000;
+            border: .1rem solid #000;
+            border-radius: .2rem;
+            cursor: pointer;
+        }
+    </style>
+
+    <body>
+        <div class="warning-container">
+            <p>For you to pair RustBot with Rust+, you must allow popup windows. You may need to refresh this page after enabling popups.</p>
+        </div>
+
+        <div class="manual-token">
+            <label for="token">Steam Token</label>
+            <input name="token" id="token" type="text" />
+            <button id="pair">Pair</button>
+        </div>
+
+        <script type="text/javascript">
+            const popupWindow = window.open('https://companion-rust.facepunch.com/login', 'mozillaWindow', 'popup');
+
+            const pairBtn = document.getElementById('pair');
+            const pairTokenInput = document.getElementById('token');
+
+            pairBtn.addEventListener('click', async () => {
+                if (pairTokenInput.value === '') return;
+
+                await fetch('http://localhost:4088/rust_auth_register?token='+pairTokenInput.value, {
+                    method: 'POST'
+                })
+
+                window.close();
+            })
+        </script>
+    </body>
+</html>
