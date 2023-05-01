@@ -19,8 +19,6 @@ export const rustauth: Command = {
             return;
         }
 
-        await rust_plus_auth.start();
-
         rust_plus_auth.onRegistered = async () => {
             server_close_timer = null;
 
@@ -29,6 +27,17 @@ export const rustauth: Command = {
             await interaction.deleteReply();
             await interaction.followUp({ content: 'Auth complete', ephemeral: true });
         }
+
+        rust_plus_auth.onAlreadyRegistered = async () => {
+            server_close_timer = null;
+
+            rust_plus_auth.stop();
+
+            await interaction.deleteReply();
+            await interaction.followUp({ content: 'Already authed', ephemeral: true });
+        }
+
+        rust_plus_auth.start();
 
         server_close_timer = setTimeout(async () => {
             await rust_plus_auth.stop();

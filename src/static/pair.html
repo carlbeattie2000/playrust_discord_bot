@@ -81,7 +81,11 @@
                 if (pairTokenInput.value === '') return;
 
                 await fetch('http://localhost:4088/rust_auth_register?token='+pairTokenInput.value, {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 'token': pairTokenInput.value })
                 })
 
                 window.close();
