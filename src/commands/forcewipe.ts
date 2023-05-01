@@ -17,6 +17,9 @@ export const forcewipe: Command = {
     run: async (interaction) => {
         const date = new Date();
 
+        date.setHours(20);
+        date.setMinutes(30);
+
         let foundDate: boolean = false;
 
         if (date.getDate() < 6) {
@@ -51,7 +54,10 @@ export const forcewipe: Command = {
 
         const timeLeftInDHMS = mToDHMS(millisecondsUntilWipe);
 
-        const replyMessage = `Next forcewipe is on the: ${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getFullYear()} @20:30 BST.\n Days left until wipe: ${timeLeftInDHMS.days} days`;
+        const forceWipeDateMessage = `Next forcewipe is on the: ${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getFullYear()} @20:30 BST.`;
+        const timeRemaingMessage = `Days left until wipe: ${timeLeftInDHMS.days}d:${timeLeftInDHMS.hours}hr:${timeLeftInDHMS.minutes}m`;
+
+        const replyMessage = `${forceWipeDateMessage}\n${timeRemaingMessage}`;
 
         interaction.reply(replyMessage);
     }

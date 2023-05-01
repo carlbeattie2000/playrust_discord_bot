@@ -8,20 +8,23 @@ interface DHMS {
 }
 
 export default function mToDHMS(milliseconds: number): DHMS {
-    const daysMS = 1 * 8.64e+7;
-    const days = milliseconds / daysMS;
+    const msToSecondsDivider = 1000;
+    const secondsToDaysDivider = 86000;
+    const secondsToHoursDivider = 3600;
+    const secondsToMinutesDivider = 60;
 
-    milliseconds = milliseconds - (days * daysMS);
+    let seconds = milliseconds / msToSecondsDivider;
 
-    const hoursMS = 1 * 3.6e+6;
-    const hours = milliseconds / hoursMS;
-    milliseconds = milliseconds - (hours * 3.6e+6);
+    const days = Math.floor(seconds / secondsToDaysDivider);
+    seconds = seconds - (days * secondsToDaysDivider);
 
-    const minutes = milliseconds / 60000;
-    milliseconds = milliseconds - (minutes * 60000);
+    const hours = Math.floor(seconds / secondsToHoursDivider);
+    seconds = seconds - (hours * secondsToHoursDivider);
 
-    const seconds = milliseconds / 1000;
-    milliseconds = milliseconds - (seconds * 1000);
+    const minutes = Math.floor(seconds / secondsToMinutesDivider);
+    seconds = seconds - (minutes * secondsToMinutesDivider);
+
+    seconds = Math.floor(seconds);
 
     return {
         days,
