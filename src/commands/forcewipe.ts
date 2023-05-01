@@ -9,48 +9,45 @@ function isDayThursday(date: Date): boolean {
     return false;
 }
 
+function findFirstThursdayOfMonth(date: Date): Date {
+    let foundDate = false;
+    let useCurrentMonth = false;
+
+    if (date.getDate() < 6)
+        if (date.getDay() < 4)
+            useCurrentMonth = true;
+
+    if (!useCurrentMonth) {
+        date.setMonth(date.getMonth() + 1);
+        date.setUTCDate(1);
+    }
+
+    while (!foundDate) {
+        if (isDayThursday(date)) {
+            foundDate = true;
+        }
+
+        if (foundDate) break;
+
+        date.setDate(date.getDate() + 1);
+    }
+
+    return date;
+}
+
 export const forcewipe: Command = {
     cooldown: 240,
     data: new SlashCommandBuilder()
         .setName('forcewipe')
         .setDescription('Gives the date and time of the next force wipe.'),
     run: async (interaction) => {
-        const date = new Date();
-
+        const date: Date = findFirstThursdayOfMonth(new Date());
         date.setHours(20);
         date.setMinutes(30);
 
-        let foundDate: boolean = false;
+        const dateNow: Date = new Date();
 
-        if (date.getDate() < 6) {
-            for (let i = date.getDate(); i <= 6; i++) {
-                if (isDayThursday(date)) {
-                    foundDate = true;
-                    break;
-                }
-
-                date.setDate(date.getDate() + 1);
-            }
-        }
-
-        if (!foundDate) {
-            date.setMonth(date.getMonth() + 1);
-            date.setUTCDate(1);
-
-            while (foundDate == false) {
-                if (isDayThursday(date)) {
-                    foundDate = true;
-                }
-
-                if (foundDate) break;
-
-                date.setDate(date.getDate() + 1);
-            }
-        }
-
-        const dateNow = new Date();
-
-        const millisecondsUntilWipe = date.getTime() - dateNow.getTime();
+        const millisecondsUntilWipe: number = date.getTime() - dateNow.getTime();
 
         const timeLeftInDHMS = mToDHMS(millisecondsUntilWipe);
 
