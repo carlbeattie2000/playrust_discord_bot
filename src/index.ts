@@ -11,7 +11,7 @@ BOT.once(Events.ClientReady, async client => {
 
     await onReady(BOT);
 
-    fcmListen();
+    fcmListen(BOT);
 })
 
 BOT.on(Events.InteractionCreate, async (interaction) => {

@@ -1,16 +1,15 @@
+import AuthConfig from '../interfaces/authConfig';
 import express, { Express, Request, Response } from 'express';
 import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 
-import { PushReceiver } from '@eneris/push-receiver';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
-import { Credentials } from '@eneris/push-receiver/dist/types';
-import AuthConfig from '../interfaces/authConfig';
+import { register } from 'push-receiver';
 
 const PORT = 4088;
 
-async function getExpoPushToken(credientals: Credentials) {
+async function getExpoPushToken(credientals: any) {
     const response = await axios.post('https://exp.host/--/api/v2/push/getExpoPushToken', {
         deviceId: uuid(),
         experienceId: '@facepunch/RustCompanion',
@@ -34,10 +33,7 @@ async function registerWithRustPlus(authToken: string, expoPushToken: string) {
 
 async function fcmRegister(steamToken: string, writeConfigFunction: Function) {
     try {
-        const fcmCreds = await new PushReceiver({
-            senderId: '976529667804',
-            persistentIds: [],
-        }).register()
+        const fcmCreds = await register('976529667804');
 
         const expoPushToken = await getExpoPushToken(fcmCreds)
 
@@ -130,7 +126,7 @@ class App {
         return undefined
     }
 
-    writeAuthConfig(dir: string, steamToken: string, expoPushToken: string, fcmCreds: Credentials) {
+    writeAuthConfig(dir: string, steamToken: string, expoPushToken: string, fcmCreds: any) {
         const filePath = join(dir, 'auth.config.json');
 
         const authConfigJson: AuthConfig = {
