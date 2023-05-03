@@ -1,39 +1,45 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
-import { PairedServer } from './interfaces/pairedServer';
+import { PairedServersConfig } from './interfaces/pairedServer';
 
 import { onInteraction } from './events/on_interaction';
 import { onReady } from './events/on_ready';
-import fcmListen, { loadPairedServer } from './services/rust_plus_pairing';
+import fcmListen, { loadPairedServers } from './services/rust_plus_pairing';
 import RustPlus from './services/rust_plus';
 
 const BOT = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 function loadRustPlusSocket(): boolean {
-    let pairedRustServer: PairedServer | undefined = loadPairedServer();
+    let pairedRustServer: PairedServersConfig | undefined = loadPairedServers();
 
     if (pairedRustServer === undefined) return false;
 
-    const rustPlusConnection = new RustPlus(pairedRustServer.ip, pairedRustServer.port, pairedRustServer.playerId, pairedRustServer.playerToken);
+    for (const server of pairedRustServer.servers) {
+        const rustPlusConnection = new RustPlus(server.ip,
+                                                server.port, server.playerId,
+        server.playerToken);
 
-    rustPlusConnection.on('connecting', () => {
-        console.log('Connecting to server:', pairedRustServer?.name);
-    })
+        rustPlusConnection.on('connecting', () => {
+            console.log('Connecting to server:', server.name);
+        })
 
-    rustPlusConnection.on('connected', () => {
-        console.log('Connected to server:', pairedRustServer?.name);
+        rustPlusConnection.on('connected', () => {
+            console.log('Connected to server:', server.name);
 
-        rustPlusConnection.sendTeamMessage('[BOT]: RustPlusBot connected!');
-    })
+            rustPlusConnection.sendTeamMessage('[BOT]: CarlsRustBotConnected');
+        })
 
-    rustPlusConnection.on('message', (message) => {
-        console.log(message);
-    })
+        rustPlusConnection.on('message', (message) => {
+            console.log('Message from:', server.name.slice(0, 18), ':', message);
+        })
 
-    rustPlusConnection.on('error', (e) => {
-        console.log(e);
-    })
+        rustPlusConnection.on('error', (error) => {
+            console.log('Socket error for server:', server.name, 'Error:', error);
+        })
 
-    rustPlusConnection.connect();
+        rustPlusConnection.connect();
+    }
+
+    console.log('Connected to', pairedRustServer.servers.length, 'servers.');
 
     return true;
 }

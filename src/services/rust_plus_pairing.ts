@@ -1,10 +1,43 @@
 import { PairedServer, PairedServersConfig } from '../interfaces/pairedServer';
-import { Client, TextChannel } from "discord.js";
 import AuthConfig from "../interfaces/authConfig";
-import rust_plus_auth from "./rust_plus_auth";
-import { listen } from 'push-receiver';
+
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { listen } from 'push-receiver';
+import { Client, TextChannel } from "discord.js";
+
+import rust_plus_auth from "./rust_plus_auth";
+
+function onFcmMessage(client: Client, { notification, persistentId }: any) {
+    if (notificationIdExists(persistentId)) return;
+
+    const body = JSON.parse(notification.data.body);
+
+    const generalChannel = client.channels.cache.get('1102239831892959335');
+
+    let msg = '';
+
+    if (body.type === 'server') {
+        savePairedServer(body);
+
+        msg = `Discord paired with server: ${body.name}`;
+    }
+
+    if (body.type === 'entity') {
+        msg = `Discord paired with: ${body.entityName}`;
+    }
+
+    if (msg === '') return;
+
+    if (generalChannel?.isTextBased()) {
+        (<TextChannel> generalChannel).send(msg);
+    }
+
+    savePersistentId(persistentId);
+
+    console.log(body);
+
+}
 
 async function fcmListen(client: Client) {
     const authConfigFile: AuthConfig | undefined = rust_plus_auth.getAuthConfig();
@@ -15,48 +48,62 @@ async function fcmListen(client: Client) {
         return;
     }
 
-    const fcmClinet = await listen(authConfigFile.fcm_credientals, ({ notification, persistentId }: any) => {
-        const body = JSON.parse(notification.data.body);
-
-        const generalChannel = client.channels.cache.get('1102239831892959335');
-
-        let msg = '';
-
-        if (body.type === 'server') {
-            const savedServer = loadPairedServer();
-
-            if (savedServer !== undefined && savedServer.id === body.id) {
-                return;
-            };
-
-            savePairedServer(body);
-
-            msg = `Discord paired with server: ${body.name}`;
-        }
-
-        if (body.type === 'entity') {
-            msg = `Discord paired with: ${body.entityName}`;
-        }
-
-        if (msg === '') return;
-
-        if (generalChannel?.isTextBased()) {
-            (<TextChannel> generalChannel).send(msg);
-        }
-
-        console.log(body);
-
+    await listen(authConfigFile.fcm_credientals, ({ notification, persistentId }: any) => {
+        onFcmMessage(client, { notification, persistentId });
     })
 }
 
-function savePairedServer(pairedServer: PairedServer) {
-    const filePath = join(process.cwd(), 'priv/paired_server.json');
-
-    writeFileSync(filePath, JSON.stringify(pairedServer));
+function serverAlreadyPaired(pairingServer: PairedServer, pairedServers: PairedServer[]): boolean {
+    return pairedServers.find((server) => server.id === pairingServer.id) ? true : false;
 }
 
-export function loadPairedServer(): PairedServer | undefined {
-    const filePath = join(process.cwd(), 'priv/paired_server.json');
+function savePairedServer(pairedServer: PairedServer) {
+    const saveFilePath = join(process.cwd(), 'priv/paired_servers.json');
+
+    const savedServers: PairedServersConfig | undefined = loadPairedServers();
+
+    if (!savedServers) {
+        return writeFileSync(saveFilePath, JSON.stringify({
+            servers: [ pairedServer ],
+            persistentIds: [],
+        }));
+    }
+
+    if (serverAlreadyPaired(pairedServer, savedServers.servers)) {
+        return;
+    }
+
+    savedServers.servers.push(pairedServer);
+
+    writeFileSync(saveFilePath, JSON.stringify(savedServers));
+}
+
+function savePersistentId(id: string) {
+    const saveFilePath = join(process.cwd(), 'priv/paired_servers.json');
+
+    const savedServers = loadPairedServers();
+
+    if (!savedServers) return;
+
+    if (notificationIdExists(id)) return;
+
+    savedServers.persistentIds.push(id);
+
+    writeFileSync(saveFilePath, JSON.stringify(savedServers));
+}
+
+function notificationIdExists(id: string): boolean {
+    const savedServers = loadPairedServers();
+
+    if (!savedServers) return false;
+
+    if (savedServers.persistentIds.includes(id)) return true;
+
+    return false;
+}
+
+export function loadPairedServers(): PairedServersConfig | undefined {
+    const filePath = join(process.cwd(), 'priv/paired_servers.json');
 
     if (existsSync(filePath)) {
         return JSON.parse(readFileSync(filePath, 'utf-8'));
