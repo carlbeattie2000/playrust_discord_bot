@@ -4,16 +4,15 @@ import AuthConfig from "../interfaces/authConfig";
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { listen } from 'push-receiver';
-import { Client, TextChannel } from "discord.js";
+import { Client } from "discord.js";
 
 import rust_plus_auth from "./rust_plus_auth";
+import discord_channel_helper from './discord_channel_helper';
 
 function onFcmMessage(client: Client, { notification, persistentId }: any) {
     if (notificationIdExists(persistentId)) return;
 
     const body = JSON.parse(notification.data.body);
-
-    const generalChannel = client.channels.cache.get('1102239831892959335');
 
     let msg = '';
 
@@ -29,9 +28,7 @@ function onFcmMessage(client: Client, { notification, persistentId }: any) {
 
     if (msg === '') return;
 
-    if (generalChannel?.isTextBased()) {
-        (<TextChannel> generalChannel).send(msg);
-    }
+    discord_channel_helper.sendMessage('general', msg);
 
     savePersistentId(persistentId);
 

@@ -5,8 +5,11 @@ import { onInteraction } from './events/on_interaction';
 import { onReady } from './events/on_ready';
 import fcmListen, { loadPairedServers } from './services/rust_plus_pairing';
 import RustPlus from './services/rust_plus';
+import discord_channel_helper from './services/discord_channel_helper';
 
 const BOT = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+discord_channel_helper.loadClient(BOT);
 
 function loadRustPlusSocket(): boolean {
     let pairedRustServer: PairedServersConfig | undefined = loadPairedServers();
