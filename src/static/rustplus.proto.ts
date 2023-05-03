@@ -162,13 +162,13 @@ export interface ClanActionResult {
 }
 
 export interface ClanInfo {
-  clanId: number;
+  clanId: bigint;
   name: string;
-  created: number;
-  creator: number;
+  created: bigint;
+  creator: bigint;
   motd: string;
-  motdTimestamp: number;
-  motdAuthor: number;
+  motdTimestamp: bigint;
+  motdAuthor: bigint;
   logo: Uint8Array;
   color: number;
   roles: ClanInfo_Role[];
@@ -192,27 +192,27 @@ export interface ClanInfo_Role {
 }
 
 export interface ClanInfo_Member {
-  steamId: number;
+  steamId: bigint;
   roleId: number;
-  joined: number;
-  lastSeen: number;
+  joined: bigint;
+  lastSeen: bigint;
   notes: string;
   online: boolean;
 }
 
 export interface ClanInfo_Invite {
-  steamId: number;
-  recruiter: number;
-  timestamp: number;
+  steamId: bigint;
+  recruiter: bigint;
+  timestamp: bigint;
 }
 
 export interface ClanLog {
-  clanId: number;
+  clanId: bigint;
   logEntries: ClanLog_Entry[];
 }
 
 export interface ClanLog_Entry {
-  timestamp: number;
+  timestamp: bigint;
   eventKey: string;
   arg1: string;
   arg2: string;
@@ -225,14 +225,14 @@ export interface ClanInvitations {
 }
 
 export interface ClanInvitations_Invitation {
-  clanId: number;
-  recruiter: number;
-  timestamp: number;
+  clanId: bigint;
+  recruiter: bigint;
+  timestamp: bigint;
 }
 
 export interface AppRequest {
   seq: number;
-  playerId: number;
+  playerId: bigint;
   playerToken: number;
   entityId: number;
   getInfo: AppEmpty | undefined;
@@ -301,7 +301,7 @@ export interface AppSetEntityValue {
 }
 
 export interface AppPromoteToLeader {
-  steamId: number;
+  steamId: bigint;
 }
 
 export interface AppGetNexusAuth {
@@ -380,14 +380,14 @@ export interface AppEntityPayload_Item {
 }
 
 export interface AppTeamInfo {
-  leaderSteamId: number;
+  leaderSteamId: bigint;
   members: AppTeamInfo_Member[];
   mapNotes: AppTeamInfo_Note[];
   leaderMapNotes: AppTeamInfo_Note[];
 }
 
 export interface AppTeamInfo_Member {
-  steamId: number;
+  steamId: bigint;
   name: string;
   x: number;
   y: number;
@@ -404,7 +404,7 @@ export interface AppTeamInfo_Note {
 }
 
 export interface AppTeamMessage {
-  steamId: number;
+  steamId: bigint;
   name: string;
   message: string;
   color: string;
@@ -420,7 +420,7 @@ export interface AppMarker {
   type: AppMarkerType;
   x: number;
   y: number;
-  steamId: number;
+  steamId: bigint;
   rotation: number;
   radius: number;
   color1: Vector4 | undefined;
@@ -452,10 +452,10 @@ export interface AppClanInfo {
 }
 
 export interface AppClanMessage {
-  steamId: number;
+  steamId: bigint;
   name: string;
   message: string;
-  time: number;
+  time: bigint;
 }
 
 export interface AppClanChat {
@@ -468,7 +468,7 @@ export interface AppNexusAuth {
 }
 
 export interface AppTeamChanged {
-  playerId: number;
+  playerId: bigint;
   teamInfo: AppTeamInfo | undefined;
 }
 
@@ -486,7 +486,7 @@ export interface AppClanChanged {
 }
 
 export interface AppNewClanMessage {
-  clanId: number;
+  clanId: bigint;
   message: AppClanMessage | undefined;
 }
 
@@ -1164,13 +1164,13 @@ export const ClanActionResult = {
 
 function createBaseClanInfo(): ClanInfo {
   return {
-    clanId: 0,
+    clanId: BigInt("0"),
     name: "",
-    created: 0,
-    creator: 0,
+    created: BigInt("0"),
+    creator: BigInt("0"),
     motd: "",
-    motdTimestamp: 0,
-    motdAuthor: 0,
+    motdTimestamp: BigInt("0"),
+    motdAuthor: BigInt("0"),
     logo: new Uint8Array(),
     color: 0,
     roles: [],
@@ -1182,26 +1182,26 @@ function createBaseClanInfo(): ClanInfo {
 
 export const ClanInfo = {
   encode(message: ClanInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.clanId !== 0) {
-      writer.uint32(8).int64(message.clanId);
+    if (message.clanId !== BigInt("0")) {
+      writer.uint32(8).int64(message.clanId.toString());
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
     }
-    if (message.created !== 0) {
-      writer.uint32(24).int64(message.created);
+    if (message.created !== BigInt("0")) {
+      writer.uint32(24).int64(message.created.toString());
     }
-    if (message.creator !== 0) {
-      writer.uint32(32).uint64(message.creator);
+    if (message.creator !== BigInt("0")) {
+      writer.uint32(32).uint64(message.creator.toString());
     }
     if (message.motd !== "") {
       writer.uint32(42).string(message.motd);
     }
-    if (message.motdTimestamp !== 0) {
-      writer.uint32(48).int64(message.motdTimestamp);
+    if (message.motdTimestamp !== BigInt("0")) {
+      writer.uint32(48).int64(message.motdTimestamp.toString());
     }
-    if (message.motdAuthor !== 0) {
-      writer.uint32(56).uint64(message.motdAuthor);
+    if (message.motdAuthor !== BigInt("0")) {
+      writer.uint32(56).uint64(message.motdAuthor.toString());
     }
     if (message.logo.length !== 0) {
       writer.uint32(66).bytes(message.logo);
@@ -1236,7 +1236,7 @@ export const ClanInfo = {
             break;
           }
 
-          message.clanId = longToNumber(reader.int64() as Long);
+          message.clanId = longToBigint(reader.int64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -1250,14 +1250,14 @@ export const ClanInfo = {
             break;
           }
 
-          message.created = longToNumber(reader.int64() as Long);
+          message.created = longToBigint(reader.int64() as Long);
           continue;
         case 4:
           if (tag !== 32) {
             break;
           }
 
-          message.creator = longToNumber(reader.uint64() as Long);
+          message.creator = longToBigint(reader.uint64() as Long);
           continue;
         case 5:
           if (tag !== 42) {
@@ -1271,14 +1271,14 @@ export const ClanInfo = {
             break;
           }
 
-          message.motdTimestamp = longToNumber(reader.int64() as Long);
+          message.motdTimestamp = longToBigint(reader.int64() as Long);
           continue;
         case 7:
           if (tag !== 56) {
             break;
           }
 
-          message.motdAuthor = longToNumber(reader.uint64() as Long);
+          message.motdAuthor = longToBigint(reader.uint64() as Long);
           continue;
         case 8:
           if (tag !== 66) {
@@ -1333,13 +1333,13 @@ export const ClanInfo = {
 
   fromJSON(object: any): ClanInfo {
     return {
-      clanId: isSet(object.clanId) ? Number(object.clanId) : 0,
+      clanId: isSet(object.clanId) ? BigInt(object.clanId) : BigInt("0"),
       name: isSet(object.name) ? String(object.name) : "",
-      created: isSet(object.created) ? Number(object.created) : 0,
-      creator: isSet(object.creator) ? Number(object.creator) : 0,
+      created: isSet(object.created) ? BigInt(object.created) : BigInt("0"),
+      creator: isSet(object.creator) ? BigInt(object.creator) : BigInt("0"),
       motd: isSet(object.motd) ? String(object.motd) : "",
-      motdTimestamp: isSet(object.motdTimestamp) ? Number(object.motdTimestamp) : 0,
-      motdAuthor: isSet(object.motdAuthor) ? Number(object.motdAuthor) : 0,
+      motdTimestamp: isSet(object.motdTimestamp) ? BigInt(object.motdTimestamp) : BigInt("0"),
+      motdAuthor: isSet(object.motdAuthor) ? BigInt(object.motdAuthor) : BigInt("0"),
       logo: isSet(object.logo) ? bytesFromBase64(object.logo) : new Uint8Array(),
       color: isSet(object.color) ? Number(object.color) : 0,
       roles: Array.isArray(object?.roles) ? object.roles.map((e: any) => ClanInfo_Role.fromJSON(e)) : [],
@@ -1351,13 +1351,13 @@ export const ClanInfo = {
 
   toJSON(message: ClanInfo): unknown {
     const obj: any = {};
-    message.clanId !== undefined && (obj.clanId = Math.round(message.clanId));
+    message.clanId !== undefined && (obj.clanId = message.clanId.toString());
     message.name !== undefined && (obj.name = message.name);
-    message.created !== undefined && (obj.created = Math.round(message.created));
-    message.creator !== undefined && (obj.creator = Math.round(message.creator));
+    message.created !== undefined && (obj.created = message.created.toString());
+    message.creator !== undefined && (obj.creator = message.creator.toString());
     message.motd !== undefined && (obj.motd = message.motd);
-    message.motdTimestamp !== undefined && (obj.motdTimestamp = Math.round(message.motdTimestamp));
-    message.motdAuthor !== undefined && (obj.motdAuthor = Math.round(message.motdAuthor));
+    message.motdTimestamp !== undefined && (obj.motdTimestamp = message.motdTimestamp.toString());
+    message.motdAuthor !== undefined && (obj.motdAuthor = message.motdAuthor.toString());
     message.logo !== undefined &&
       (obj.logo = base64FromBytes(message.logo !== undefined ? message.logo : new Uint8Array()));
     message.color !== undefined && (obj.color = Math.round(message.color));
@@ -1386,13 +1386,13 @@ export const ClanInfo = {
 
   fromPartial<I extends Exact<DeepPartial<ClanInfo>, I>>(object: I): ClanInfo {
     const message = createBaseClanInfo();
-    message.clanId = object.clanId ?? 0;
+    message.clanId = object.clanId ?? BigInt("0");
     message.name = object.name ?? "";
-    message.created = object.created ?? 0;
-    message.creator = object.creator ?? 0;
+    message.created = object.created ?? BigInt("0");
+    message.creator = object.creator ?? BigInt("0");
     message.motd = object.motd ?? "";
-    message.motdTimestamp = object.motdTimestamp ?? 0;
-    message.motdAuthor = object.motdAuthor ?? 0;
+    message.motdTimestamp = object.motdTimestamp ?? BigInt("0");
+    message.motdAuthor = object.motdAuthor ?? BigInt("0");
     message.logo = object.logo ?? new Uint8Array();
     message.color = object.color ?? 0;
     message.roles = object.roles?.map((e) => ClanInfo_Role.fromPartial(e)) || [];
@@ -1604,22 +1604,22 @@ export const ClanInfo_Role = {
 };
 
 function createBaseClanInfo_Member(): ClanInfo_Member {
-  return { steamId: 0, roleId: 0, joined: 0, lastSeen: 0, notes: "", online: false };
+  return { steamId: BigInt("0"), roleId: 0, joined: BigInt("0"), lastSeen: BigInt("0"), notes: "", online: false };
 }
 
 export const ClanInfo_Member = {
   encode(message: ClanInfo_Member, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.steamId !== 0) {
-      writer.uint32(8).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.steamId.toString());
     }
     if (message.roleId !== 0) {
       writer.uint32(16).int32(message.roleId);
     }
-    if (message.joined !== 0) {
-      writer.uint32(24).int64(message.joined);
+    if (message.joined !== BigInt("0")) {
+      writer.uint32(24).int64(message.joined.toString());
     }
-    if (message.lastSeen !== 0) {
-      writer.uint32(32).int64(message.lastSeen);
+    if (message.lastSeen !== BigInt("0")) {
+      writer.uint32(32).int64(message.lastSeen.toString());
     }
     if (message.notes !== "") {
       writer.uint32(42).string(message.notes);
@@ -1642,7 +1642,7 @@ export const ClanInfo_Member = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 16) {
@@ -1656,14 +1656,14 @@ export const ClanInfo_Member = {
             break;
           }
 
-          message.joined = longToNumber(reader.int64() as Long);
+          message.joined = longToBigint(reader.int64() as Long);
           continue;
         case 4:
           if (tag !== 32) {
             break;
           }
 
-          message.lastSeen = longToNumber(reader.int64() as Long);
+          message.lastSeen = longToBigint(reader.int64() as Long);
           continue;
         case 5:
           if (tag !== 42) {
@@ -1690,10 +1690,10 @@ export const ClanInfo_Member = {
 
   fromJSON(object: any): ClanInfo_Member {
     return {
-      steamId: isSet(object.steamId) ? Number(object.steamId) : 0,
+      steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0"),
       roleId: isSet(object.roleId) ? Number(object.roleId) : 0,
-      joined: isSet(object.joined) ? Number(object.joined) : 0,
-      lastSeen: isSet(object.lastSeen) ? Number(object.lastSeen) : 0,
+      joined: isSet(object.joined) ? BigInt(object.joined) : BigInt("0"),
+      lastSeen: isSet(object.lastSeen) ? BigInt(object.lastSeen) : BigInt("0"),
       notes: isSet(object.notes) ? String(object.notes) : "",
       online: isSet(object.online) ? Boolean(object.online) : false,
     };
@@ -1701,10 +1701,10 @@ export const ClanInfo_Member = {
 
   toJSON(message: ClanInfo_Member): unknown {
     const obj: any = {};
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
     message.roleId !== undefined && (obj.roleId = Math.round(message.roleId));
-    message.joined !== undefined && (obj.joined = Math.round(message.joined));
-    message.lastSeen !== undefined && (obj.lastSeen = Math.round(message.lastSeen));
+    message.joined !== undefined && (obj.joined = message.joined.toString());
+    message.lastSeen !== undefined && (obj.lastSeen = message.lastSeen.toString());
     message.notes !== undefined && (obj.notes = message.notes);
     message.online !== undefined && (obj.online = message.online);
     return obj;
@@ -1716,10 +1716,10 @@ export const ClanInfo_Member = {
 
   fromPartial<I extends Exact<DeepPartial<ClanInfo_Member>, I>>(object: I): ClanInfo_Member {
     const message = createBaseClanInfo_Member();
-    message.steamId = object.steamId ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
     message.roleId = object.roleId ?? 0;
-    message.joined = object.joined ?? 0;
-    message.lastSeen = object.lastSeen ?? 0;
+    message.joined = object.joined ?? BigInt("0");
+    message.lastSeen = object.lastSeen ?? BigInt("0");
     message.notes = object.notes ?? "";
     message.online = object.online ?? false;
     return message;
@@ -1727,19 +1727,19 @@ export const ClanInfo_Member = {
 };
 
 function createBaseClanInfo_Invite(): ClanInfo_Invite {
-  return { steamId: 0, recruiter: 0, timestamp: 0 };
+  return { steamId: BigInt("0"), recruiter: BigInt("0"), timestamp: BigInt("0") };
 }
 
 export const ClanInfo_Invite = {
   encode(message: ClanInfo_Invite, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.steamId !== 0) {
-      writer.uint32(8).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.steamId.toString());
     }
-    if (message.recruiter !== 0) {
-      writer.uint32(16).uint64(message.recruiter);
+    if (message.recruiter !== BigInt("0")) {
+      writer.uint32(16).uint64(message.recruiter.toString());
     }
-    if (message.timestamp !== 0) {
-      writer.uint32(24).int64(message.timestamp);
+    if (message.timestamp !== BigInt("0")) {
+      writer.uint32(24).int64(message.timestamp.toString());
     }
     return writer;
   },
@@ -1756,21 +1756,21 @@ export const ClanInfo_Invite = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 16) {
             break;
           }
 
-          message.recruiter = longToNumber(reader.uint64() as Long);
+          message.recruiter = longToBigint(reader.uint64() as Long);
           continue;
         case 3:
           if (tag !== 24) {
             break;
           }
 
-          message.timestamp = longToNumber(reader.int64() as Long);
+          message.timestamp = longToBigint(reader.int64() as Long);
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -1783,17 +1783,17 @@ export const ClanInfo_Invite = {
 
   fromJSON(object: any): ClanInfo_Invite {
     return {
-      steamId: isSet(object.steamId) ? Number(object.steamId) : 0,
-      recruiter: isSet(object.recruiter) ? Number(object.recruiter) : 0,
-      timestamp: isSet(object.timestamp) ? Number(object.timestamp) : 0,
+      steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0"),
+      recruiter: isSet(object.recruiter) ? BigInt(object.recruiter) : BigInt("0"),
+      timestamp: isSet(object.timestamp) ? BigInt(object.timestamp) : BigInt("0"),
     };
   },
 
   toJSON(message: ClanInfo_Invite): unknown {
     const obj: any = {};
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
-    message.recruiter !== undefined && (obj.recruiter = Math.round(message.recruiter));
-    message.timestamp !== undefined && (obj.timestamp = Math.round(message.timestamp));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
+    message.recruiter !== undefined && (obj.recruiter = message.recruiter.toString());
+    message.timestamp !== undefined && (obj.timestamp = message.timestamp.toString());
     return obj;
   },
 
@@ -1803,21 +1803,21 @@ export const ClanInfo_Invite = {
 
   fromPartial<I extends Exact<DeepPartial<ClanInfo_Invite>, I>>(object: I): ClanInfo_Invite {
     const message = createBaseClanInfo_Invite();
-    message.steamId = object.steamId ?? 0;
-    message.recruiter = object.recruiter ?? 0;
-    message.timestamp = object.timestamp ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
+    message.recruiter = object.recruiter ?? BigInt("0");
+    message.timestamp = object.timestamp ?? BigInt("0");
     return message;
   },
 };
 
 function createBaseClanLog(): ClanLog {
-  return { clanId: 0, logEntries: [] };
+  return { clanId: BigInt("0"), logEntries: [] };
 }
 
 export const ClanLog = {
   encode(message: ClanLog, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.clanId !== 0) {
-      writer.uint32(8).int64(message.clanId);
+    if (message.clanId !== BigInt("0")) {
+      writer.uint32(8).int64(message.clanId.toString());
     }
     for (const v of message.logEntries) {
       ClanLog_Entry.encode(v!, writer.uint32(18).fork()).ldelim();
@@ -1837,7 +1837,7 @@ export const ClanLog = {
             break;
           }
 
-          message.clanId = longToNumber(reader.int64() as Long);
+          message.clanId = longToBigint(reader.int64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -1857,14 +1857,14 @@ export const ClanLog = {
 
   fromJSON(object: any): ClanLog {
     return {
-      clanId: isSet(object.clanId) ? Number(object.clanId) : 0,
+      clanId: isSet(object.clanId) ? BigInt(object.clanId) : BigInt("0"),
       logEntries: Array.isArray(object?.logEntries) ? object.logEntries.map((e: any) => ClanLog_Entry.fromJSON(e)) : [],
     };
   },
 
   toJSON(message: ClanLog): unknown {
     const obj: any = {};
-    message.clanId !== undefined && (obj.clanId = Math.round(message.clanId));
+    message.clanId !== undefined && (obj.clanId = message.clanId.toString());
     if (message.logEntries) {
       obj.logEntries = message.logEntries.map((e) => e ? ClanLog_Entry.toJSON(e) : undefined);
     } else {
@@ -1879,20 +1879,20 @@ export const ClanLog = {
 
   fromPartial<I extends Exact<DeepPartial<ClanLog>, I>>(object: I): ClanLog {
     const message = createBaseClanLog();
-    message.clanId = object.clanId ?? 0;
+    message.clanId = object.clanId ?? BigInt("0");
     message.logEntries = object.logEntries?.map((e) => ClanLog_Entry.fromPartial(e)) || [];
     return message;
   },
 };
 
 function createBaseClanLog_Entry(): ClanLog_Entry {
-  return { timestamp: 0, eventKey: "", arg1: "", arg2: "", arg3: "", arg4: "" };
+  return { timestamp: BigInt("0"), eventKey: "", arg1: "", arg2: "", arg3: "", arg4: "" };
 }
 
 export const ClanLog_Entry = {
   encode(message: ClanLog_Entry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.timestamp !== 0) {
-      writer.uint32(8).int64(message.timestamp);
+    if (message.timestamp !== BigInt("0")) {
+      writer.uint32(8).int64(message.timestamp.toString());
     }
     if (message.eventKey !== "") {
       writer.uint32(18).string(message.eventKey);
@@ -1924,7 +1924,7 @@ export const ClanLog_Entry = {
             break;
           }
 
-          message.timestamp = longToNumber(reader.int64() as Long);
+          message.timestamp = longToBigint(reader.int64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -1972,7 +1972,7 @@ export const ClanLog_Entry = {
 
   fromJSON(object: any): ClanLog_Entry {
     return {
-      timestamp: isSet(object.timestamp) ? Number(object.timestamp) : 0,
+      timestamp: isSet(object.timestamp) ? BigInt(object.timestamp) : BigInt("0"),
       eventKey: isSet(object.eventKey) ? String(object.eventKey) : "",
       arg1: isSet(object.arg1) ? String(object.arg1) : "",
       arg2: isSet(object.arg2) ? String(object.arg2) : "",
@@ -1983,7 +1983,7 @@ export const ClanLog_Entry = {
 
   toJSON(message: ClanLog_Entry): unknown {
     const obj: any = {};
-    message.timestamp !== undefined && (obj.timestamp = Math.round(message.timestamp));
+    message.timestamp !== undefined && (obj.timestamp = message.timestamp.toString());
     message.eventKey !== undefined && (obj.eventKey = message.eventKey);
     message.arg1 !== undefined && (obj.arg1 = message.arg1);
     message.arg2 !== undefined && (obj.arg2 = message.arg2);
@@ -1998,7 +1998,7 @@ export const ClanLog_Entry = {
 
   fromPartial<I extends Exact<DeepPartial<ClanLog_Entry>, I>>(object: I): ClanLog_Entry {
     const message = createBaseClanLog_Entry();
-    message.timestamp = object.timestamp ?? 0;
+    message.timestamp = object.timestamp ?? BigInt("0");
     message.eventKey = object.eventKey ?? "";
     message.arg1 = object.arg1 ?? "";
     message.arg2 = object.arg2 ?? "";
@@ -2073,19 +2073,19 @@ export const ClanInvitations = {
 };
 
 function createBaseClanInvitations_Invitation(): ClanInvitations_Invitation {
-  return { clanId: 0, recruiter: 0, timestamp: 0 };
+  return { clanId: BigInt("0"), recruiter: BigInt("0"), timestamp: BigInt("0") };
 }
 
 export const ClanInvitations_Invitation = {
   encode(message: ClanInvitations_Invitation, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.clanId !== 0) {
-      writer.uint32(8).int64(message.clanId);
+    if (message.clanId !== BigInt("0")) {
+      writer.uint32(8).int64(message.clanId.toString());
     }
-    if (message.recruiter !== 0) {
-      writer.uint32(16).uint64(message.recruiter);
+    if (message.recruiter !== BigInt("0")) {
+      writer.uint32(16).uint64(message.recruiter.toString());
     }
-    if (message.timestamp !== 0) {
-      writer.uint32(24).int64(message.timestamp);
+    if (message.timestamp !== BigInt("0")) {
+      writer.uint32(24).int64(message.timestamp.toString());
     }
     return writer;
   },
@@ -2102,21 +2102,21 @@ export const ClanInvitations_Invitation = {
             break;
           }
 
-          message.clanId = longToNumber(reader.int64() as Long);
+          message.clanId = longToBigint(reader.int64() as Long);
           continue;
         case 2:
           if (tag !== 16) {
             break;
           }
 
-          message.recruiter = longToNumber(reader.uint64() as Long);
+          message.recruiter = longToBigint(reader.uint64() as Long);
           continue;
         case 3:
           if (tag !== 24) {
             break;
           }
 
-          message.timestamp = longToNumber(reader.int64() as Long);
+          message.timestamp = longToBigint(reader.int64() as Long);
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -2129,17 +2129,17 @@ export const ClanInvitations_Invitation = {
 
   fromJSON(object: any): ClanInvitations_Invitation {
     return {
-      clanId: isSet(object.clanId) ? Number(object.clanId) : 0,
-      recruiter: isSet(object.recruiter) ? Number(object.recruiter) : 0,
-      timestamp: isSet(object.timestamp) ? Number(object.timestamp) : 0,
+      clanId: isSet(object.clanId) ? BigInt(object.clanId) : BigInt("0"),
+      recruiter: isSet(object.recruiter) ? BigInt(object.recruiter) : BigInt("0"),
+      timestamp: isSet(object.timestamp) ? BigInt(object.timestamp) : BigInt("0"),
     };
   },
 
   toJSON(message: ClanInvitations_Invitation): unknown {
     const obj: any = {};
-    message.clanId !== undefined && (obj.clanId = Math.round(message.clanId));
-    message.recruiter !== undefined && (obj.recruiter = Math.round(message.recruiter));
-    message.timestamp !== undefined && (obj.timestamp = Math.round(message.timestamp));
+    message.clanId !== undefined && (obj.clanId = message.clanId.toString());
+    message.recruiter !== undefined && (obj.recruiter = message.recruiter.toString());
+    message.timestamp !== undefined && (obj.timestamp = message.timestamp.toString());
     return obj;
   },
 
@@ -2149,9 +2149,9 @@ export const ClanInvitations_Invitation = {
 
   fromPartial<I extends Exact<DeepPartial<ClanInvitations_Invitation>, I>>(object: I): ClanInvitations_Invitation {
     const message = createBaseClanInvitations_Invitation();
-    message.clanId = object.clanId ?? 0;
-    message.recruiter = object.recruiter ?? 0;
-    message.timestamp = object.timestamp ?? 0;
+    message.clanId = object.clanId ?? BigInt("0");
+    message.recruiter = object.recruiter ?? BigInt("0");
+    message.timestamp = object.timestamp ?? BigInt("0");
     return message;
   },
 };
@@ -2159,7 +2159,7 @@ export const ClanInvitations_Invitation = {
 function createBaseAppRequest(): AppRequest {
   return {
     seq: 0,
-    playerId: 0,
+    playerId: BigInt("0"),
     playerToken: 0,
     entityId: 0,
     getInfo: undefined,
@@ -2190,8 +2190,8 @@ export const AppRequest = {
     if (message.seq !== 0) {
       writer.uint32(8).uint32(message.seq);
     }
-    if (message.playerId !== 0) {
-      writer.uint32(16).uint64(message.playerId);
+    if (message.playerId !== BigInt("0")) {
+      writer.uint32(16).uint64(message.playerId.toString());
     }
     if (message.playerToken !== 0) {
       writer.uint32(24).int32(message.playerToken);
@@ -2281,7 +2281,7 @@ export const AppRequest = {
             break;
           }
 
-          message.playerId = longToNumber(reader.uint64() as Long);
+          message.playerId = longToBigint(reader.uint64() as Long);
           continue;
         case 3:
           if (tag !== 24) {
@@ -2449,7 +2449,7 @@ export const AppRequest = {
   fromJSON(object: any): AppRequest {
     return {
       seq: isSet(object.seq) ? Number(object.seq) : 0,
-      playerId: isSet(object.playerId) ? Number(object.playerId) : 0,
+      playerId: isSet(object.playerId) ? BigInt(object.playerId) : BigInt("0"),
       playerToken: isSet(object.playerToken) ? Number(object.playerToken) : 0,
       entityId: isSet(object.entityId) ? Number(object.entityId) : 0,
       getInfo: isSet(object.getInfo) ? AppEmpty.fromJSON(object.getInfo) : undefined,
@@ -2478,7 +2478,7 @@ export const AppRequest = {
   toJSON(message: AppRequest): unknown {
     const obj: any = {};
     message.seq !== undefined && (obj.seq = Math.round(message.seq));
-    message.playerId !== undefined && (obj.playerId = Math.round(message.playerId));
+    message.playerId !== undefined && (obj.playerId = message.playerId.toString());
     message.playerToken !== undefined && (obj.playerToken = Math.round(message.playerToken));
     message.entityId !== undefined && (obj.entityId = Math.round(message.entityId));
     message.getInfo !== undefined && (obj.getInfo = message.getInfo ? AppEmpty.toJSON(message.getInfo) : undefined);
@@ -2528,7 +2528,7 @@ export const AppRequest = {
   fromPartial<I extends Exact<DeepPartial<AppRequest>, I>>(object: I): AppRequest {
     const message = createBaseAppRequest();
     message.seq = object.seq ?? 0;
-    message.playerId = object.playerId ?? 0;
+    message.playerId = object.playerId ?? BigInt("0");
     message.playerToken = object.playerToken ?? 0;
     message.entityId = object.entityId ?? 0;
     message.getInfo = (object.getInfo !== undefined && object.getInfo !== null)
@@ -3264,13 +3264,13 @@ export const AppSetEntityValue = {
 };
 
 function createBaseAppPromoteToLeader(): AppPromoteToLeader {
-  return { steamId: 0 };
+  return { steamId: BigInt("0") };
 }
 
 export const AppPromoteToLeader = {
   encode(message: AppPromoteToLeader, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.steamId !== 0) {
-      writer.uint32(8).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.steamId.toString());
     }
     return writer;
   },
@@ -3287,7 +3287,7 @@ export const AppPromoteToLeader = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -3299,12 +3299,12 @@ export const AppPromoteToLeader = {
   },
 
   fromJSON(object: any): AppPromoteToLeader {
-    return { steamId: isSet(object.steamId) ? Number(object.steamId) : 0 };
+    return { steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0") };
   },
 
   toJSON(message: AppPromoteToLeader): unknown {
     const obj: any = {};
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
     return obj;
   },
 
@@ -3314,7 +3314,7 @@ export const AppPromoteToLeader = {
 
   fromPartial<I extends Exact<DeepPartial<AppPromoteToLeader>, I>>(object: I): AppPromoteToLeader {
     const message = createBaseAppPromoteToLeader();
-    message.steamId = object.steamId ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
     return message;
   },
 };
@@ -4382,13 +4382,13 @@ export const AppEntityPayload_Item = {
 };
 
 function createBaseAppTeamInfo(): AppTeamInfo {
-  return { leaderSteamId: 0, members: [], mapNotes: [], leaderMapNotes: [] };
+  return { leaderSteamId: BigInt("0"), members: [], mapNotes: [], leaderMapNotes: [] };
 }
 
 export const AppTeamInfo = {
   encode(message: AppTeamInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.leaderSteamId !== 0) {
-      writer.uint32(8).uint64(message.leaderSteamId);
+    if (message.leaderSteamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.leaderSteamId.toString());
     }
     for (const v of message.members) {
       AppTeamInfo_Member.encode(v!, writer.uint32(18).fork()).ldelim();
@@ -4414,7 +4414,7 @@ export const AppTeamInfo = {
             break;
           }
 
-          message.leaderSteamId = longToNumber(reader.uint64() as Long);
+          message.leaderSteamId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -4448,7 +4448,7 @@ export const AppTeamInfo = {
 
   fromJSON(object: any): AppTeamInfo {
     return {
-      leaderSteamId: isSet(object.leaderSteamId) ? Number(object.leaderSteamId) : 0,
+      leaderSteamId: isSet(object.leaderSteamId) ? BigInt(object.leaderSteamId) : BigInt("0"),
       members: Array.isArray(object?.members) ? object.members.map((e: any) => AppTeamInfo_Member.fromJSON(e)) : [],
       mapNotes: Array.isArray(object?.mapNotes) ? object.mapNotes.map((e: any) => AppTeamInfo_Note.fromJSON(e)) : [],
       leaderMapNotes: Array.isArray(object?.leaderMapNotes)
@@ -4459,7 +4459,7 @@ export const AppTeamInfo = {
 
   toJSON(message: AppTeamInfo): unknown {
     const obj: any = {};
-    message.leaderSteamId !== undefined && (obj.leaderSteamId = Math.round(message.leaderSteamId));
+    message.leaderSteamId !== undefined && (obj.leaderSteamId = message.leaderSteamId.toString());
     if (message.members) {
       obj.members = message.members.map((e) => e ? AppTeamInfo_Member.toJSON(e) : undefined);
     } else {
@@ -4484,7 +4484,7 @@ export const AppTeamInfo = {
 
   fromPartial<I extends Exact<DeepPartial<AppTeamInfo>, I>>(object: I): AppTeamInfo {
     const message = createBaseAppTeamInfo();
-    message.leaderSteamId = object.leaderSteamId ?? 0;
+    message.leaderSteamId = object.leaderSteamId ?? BigInt("0");
     message.members = object.members?.map((e) => AppTeamInfo_Member.fromPartial(e)) || [];
     message.mapNotes = object.mapNotes?.map((e) => AppTeamInfo_Note.fromPartial(e)) || [];
     message.leaderMapNotes = object.leaderMapNotes?.map((e) => AppTeamInfo_Note.fromPartial(e)) || [];
@@ -4493,13 +4493,13 @@ export const AppTeamInfo = {
 };
 
 function createBaseAppTeamInfo_Member(): AppTeamInfo_Member {
-  return { steamId: 0, name: "", x: 0, y: 0, isOnline: false, spawnTime: 0, isAlive: false, deathTime: 0 };
+  return { steamId: BigInt("0"), name: "", x: 0, y: 0, isOnline: false, spawnTime: 0, isAlive: false, deathTime: 0 };
 }
 
 export const AppTeamInfo_Member = {
   encode(message: AppTeamInfo_Member, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.steamId !== 0) {
-      writer.uint32(8).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.steamId.toString());
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -4537,7 +4537,7 @@ export const AppTeamInfo_Member = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -4599,7 +4599,7 @@ export const AppTeamInfo_Member = {
 
   fromJSON(object: any): AppTeamInfo_Member {
     return {
-      steamId: isSet(object.steamId) ? Number(object.steamId) : 0,
+      steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0"),
       name: isSet(object.name) ? String(object.name) : "",
       x: isSet(object.x) ? Number(object.x) : 0,
       y: isSet(object.y) ? Number(object.y) : 0,
@@ -4612,7 +4612,7 @@ export const AppTeamInfo_Member = {
 
   toJSON(message: AppTeamInfo_Member): unknown {
     const obj: any = {};
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
     message.name !== undefined && (obj.name = message.name);
     message.x !== undefined && (obj.x = message.x);
     message.y !== undefined && (obj.y = message.y);
@@ -4629,7 +4629,7 @@ export const AppTeamInfo_Member = {
 
   fromPartial<I extends Exact<DeepPartial<AppTeamInfo_Member>, I>>(object: I): AppTeamInfo_Member {
     const message = createBaseAppTeamInfo_Member();
-    message.steamId = object.steamId ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
     message.name = object.name ?? "";
     message.x = object.x ?? 0;
     message.y = object.y ?? 0;
@@ -4726,13 +4726,13 @@ export const AppTeamInfo_Note = {
 };
 
 function createBaseAppTeamMessage(): AppTeamMessage {
-  return { steamId: 0, name: "", message: "", color: "", time: 0 };
+  return { steamId: BigInt("0"), name: "", message: "", color: "", time: 0 };
 }
 
 export const AppTeamMessage = {
   encode(message: AppTeamMessage, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.steamId !== 0) {
-      writer.uint32(8).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.steamId.toString());
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -4761,7 +4761,7 @@ export const AppTeamMessage = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -4802,7 +4802,7 @@ export const AppTeamMessage = {
 
   fromJSON(object: any): AppTeamMessage {
     return {
-      steamId: isSet(object.steamId) ? Number(object.steamId) : 0,
+      steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0"),
       name: isSet(object.name) ? String(object.name) : "",
       message: isSet(object.message) ? String(object.message) : "",
       color: isSet(object.color) ? String(object.color) : "",
@@ -4812,7 +4812,7 @@ export const AppTeamMessage = {
 
   toJSON(message: AppTeamMessage): unknown {
     const obj: any = {};
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
     message.name !== undefined && (obj.name = message.name);
     message.message !== undefined && (obj.message = message.message);
     message.color !== undefined && (obj.color = message.color);
@@ -4826,7 +4826,7 @@ export const AppTeamMessage = {
 
   fromPartial<I extends Exact<DeepPartial<AppTeamMessage>, I>>(object: I): AppTeamMessage {
     const message = createBaseAppTeamMessage();
-    message.steamId = object.steamId ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
     message.name = object.name ?? "";
     message.message = object.message ?? "";
     message.color = object.color ?? "";
@@ -4903,7 +4903,7 @@ function createBaseAppMarker(): AppMarker {
     type: 0,
     x: 0,
     y: 0,
-    steamId: 0,
+    steamId: BigInt("0"),
     rotation: 0,
     radius: 0,
     color1: undefined,
@@ -4929,8 +4929,8 @@ export const AppMarker = {
     if (message.y !== 0) {
       writer.uint32(37).float(message.y);
     }
-    if (message.steamId !== 0) {
-      writer.uint32(40).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(40).uint64(message.steamId.toString());
     }
     if (message.rotation !== 0) {
       writer.uint32(53).float(message.rotation);
@@ -4999,7 +4999,7 @@ export const AppMarker = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
         case 6:
           if (tag !== 53) {
@@ -5072,7 +5072,7 @@ export const AppMarker = {
       type: isSet(object.type) ? appMarkerTypeFromJSON(object.type) : 0,
       x: isSet(object.x) ? Number(object.x) : 0,
       y: isSet(object.y) ? Number(object.y) : 0,
-      steamId: isSet(object.steamId) ? Number(object.steamId) : 0,
+      steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0"),
       rotation: isSet(object.rotation) ? Number(object.rotation) : 0,
       radius: isSet(object.radius) ? Number(object.radius) : 0,
       color1: isSet(object.color1) ? Vector4.fromJSON(object.color1) : undefined,
@@ -5092,7 +5092,7 @@ export const AppMarker = {
     message.type !== undefined && (obj.type = appMarkerTypeToJSON(message.type));
     message.x !== undefined && (obj.x = message.x);
     message.y !== undefined && (obj.y = message.y);
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
     message.rotation !== undefined && (obj.rotation = message.rotation);
     message.radius !== undefined && (obj.radius = message.radius);
     message.color1 !== undefined && (obj.color1 = message.color1 ? Vector4.toJSON(message.color1) : undefined);
@@ -5118,7 +5118,7 @@ export const AppMarker = {
     message.type = object.type ?? 0;
     message.x = object.x ?? 0;
     message.y = object.y ?? 0;
-    message.steamId = object.steamId ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
     message.rotation = object.rotation ?? 0;
     message.radius = object.radius ?? 0;
     message.color1 = (object.color1 !== undefined && object.color1 !== null)
@@ -5426,13 +5426,13 @@ export const AppClanInfo = {
 };
 
 function createBaseAppClanMessage(): AppClanMessage {
-  return { steamId: 0, name: "", message: "", time: 0 };
+  return { steamId: BigInt("0"), name: "", message: "", time: BigInt("0") };
 }
 
 export const AppClanMessage = {
   encode(message: AppClanMessage, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.steamId !== 0) {
-      writer.uint32(8).uint64(message.steamId);
+    if (message.steamId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.steamId.toString());
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -5440,8 +5440,8 @@ export const AppClanMessage = {
     if (message.message !== "") {
       writer.uint32(26).string(message.message);
     }
-    if (message.time !== 0) {
-      writer.uint32(32).int64(message.time);
+    if (message.time !== BigInt("0")) {
+      writer.uint32(32).int64(message.time.toString());
     }
     return writer;
   },
@@ -5458,7 +5458,7 @@ export const AppClanMessage = {
             break;
           }
 
-          message.steamId = longToNumber(reader.uint64() as Long);
+          message.steamId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -5479,7 +5479,7 @@ export const AppClanMessage = {
             break;
           }
 
-          message.time = longToNumber(reader.int64() as Long);
+          message.time = longToBigint(reader.int64() as Long);
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -5492,19 +5492,19 @@ export const AppClanMessage = {
 
   fromJSON(object: any): AppClanMessage {
     return {
-      steamId: isSet(object.steamId) ? Number(object.steamId) : 0,
+      steamId: isSet(object.steamId) ? BigInt(object.steamId) : BigInt("0"),
       name: isSet(object.name) ? String(object.name) : "",
       message: isSet(object.message) ? String(object.message) : "",
-      time: isSet(object.time) ? Number(object.time) : 0,
+      time: isSet(object.time) ? BigInt(object.time) : BigInt("0"),
     };
   },
 
   toJSON(message: AppClanMessage): unknown {
     const obj: any = {};
-    message.steamId !== undefined && (obj.steamId = Math.round(message.steamId));
+    message.steamId !== undefined && (obj.steamId = message.steamId.toString());
     message.name !== undefined && (obj.name = message.name);
     message.message !== undefined && (obj.message = message.message);
-    message.time !== undefined && (obj.time = Math.round(message.time));
+    message.time !== undefined && (obj.time = message.time.toString());
     return obj;
   },
 
@@ -5514,10 +5514,10 @@ export const AppClanMessage = {
 
   fromPartial<I extends Exact<DeepPartial<AppClanMessage>, I>>(object: I): AppClanMessage {
     const message = createBaseAppClanMessage();
-    message.steamId = object.steamId ?? 0;
+    message.steamId = object.steamId ?? BigInt("0");
     message.name = object.name ?? "";
     message.message = object.message ?? "";
-    message.time = object.time ?? 0;
+    message.time = object.time ?? BigInt("0");
     return message;
   },
 };
@@ -5656,13 +5656,13 @@ export const AppNexusAuth = {
 };
 
 function createBaseAppTeamChanged(): AppTeamChanged {
-  return { playerId: 0, teamInfo: undefined };
+  return { playerId: BigInt("0"), teamInfo: undefined };
 }
 
 export const AppTeamChanged = {
   encode(message: AppTeamChanged, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.playerId !== 0) {
-      writer.uint32(8).uint64(message.playerId);
+    if (message.playerId !== BigInt("0")) {
+      writer.uint32(8).uint64(message.playerId.toString());
     }
     if (message.teamInfo !== undefined) {
       AppTeamInfo.encode(message.teamInfo, writer.uint32(18).fork()).ldelim();
@@ -5682,7 +5682,7 @@ export const AppTeamChanged = {
             break;
           }
 
-          message.playerId = longToNumber(reader.uint64() as Long);
+          message.playerId = longToBigint(reader.uint64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -5702,14 +5702,14 @@ export const AppTeamChanged = {
 
   fromJSON(object: any): AppTeamChanged {
     return {
-      playerId: isSet(object.playerId) ? Number(object.playerId) : 0,
+      playerId: isSet(object.playerId) ? BigInt(object.playerId) : BigInt("0"),
       teamInfo: isSet(object.teamInfo) ? AppTeamInfo.fromJSON(object.teamInfo) : undefined,
     };
   },
 
   toJSON(message: AppTeamChanged): unknown {
     const obj: any = {};
-    message.playerId !== undefined && (obj.playerId = Math.round(message.playerId));
+    message.playerId !== undefined && (obj.playerId = message.playerId.toString());
     message.teamInfo !== undefined &&
       (obj.teamInfo = message.teamInfo ? AppTeamInfo.toJSON(message.teamInfo) : undefined);
     return obj;
@@ -5721,7 +5721,7 @@ export const AppTeamChanged = {
 
   fromPartial<I extends Exact<DeepPartial<AppTeamChanged>, I>>(object: I): AppTeamChanged {
     const message = createBaseAppTeamChanged();
-    message.playerId = object.playerId ?? 0;
+    message.playerId = object.playerId ?? BigInt("0");
     message.teamInfo = (object.teamInfo !== undefined && object.teamInfo !== null)
       ? AppTeamInfo.fromPartial(object.teamInfo)
       : undefined;
@@ -5921,13 +5921,13 @@ export const AppClanChanged = {
 };
 
 function createBaseAppNewClanMessage(): AppNewClanMessage {
-  return { clanId: 0, message: undefined };
+  return { clanId: BigInt("0"), message: undefined };
 }
 
 export const AppNewClanMessage = {
   encode(message: AppNewClanMessage, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.clanId !== 0) {
-      writer.uint32(8).int64(message.clanId);
+    if (message.clanId !== BigInt("0")) {
+      writer.uint32(8).int64(message.clanId.toString());
     }
     if (message.message !== undefined) {
       AppClanMessage.encode(message.message, writer.uint32(18).fork()).ldelim();
@@ -5947,7 +5947,7 @@ export const AppNewClanMessage = {
             break;
           }
 
-          message.clanId = longToNumber(reader.int64() as Long);
+          message.clanId = longToBigint(reader.int64() as Long);
           continue;
         case 2:
           if (tag !== 18) {
@@ -5967,14 +5967,14 @@ export const AppNewClanMessage = {
 
   fromJSON(object: any): AppNewClanMessage {
     return {
-      clanId: isSet(object.clanId) ? Number(object.clanId) : 0,
+      clanId: isSet(object.clanId) ? BigInt(object.clanId) : BigInt("0"),
       message: isSet(object.message) ? AppClanMessage.fromJSON(object.message) : undefined,
     };
   },
 
   toJSON(message: AppNewClanMessage): unknown {
     const obj: any = {};
-    message.clanId !== undefined && (obj.clanId = Math.round(message.clanId));
+    message.clanId !== undefined && (obj.clanId = message.clanId.toString());
     message.message !== undefined &&
       (obj.message = message.message ? AppClanMessage.toJSON(message.message) : undefined);
     return obj;
@@ -5986,7 +5986,7 @@ export const AppNewClanMessage = {
 
   fromPartial<I extends Exact<DeepPartial<AppNewClanMessage>, I>>(object: I): AppNewClanMessage {
     const message = createBaseAppNewClanMessage();
-    message.clanId = object.clanId ?? 0;
+    message.clanId = object.clanId ?? BigInt("0");
     message.message = (object.message !== undefined && object.message !== null)
       ? AppClanMessage.fromPartial(object.message)
       : undefined;
@@ -6522,7 +6522,7 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | bigint | undefined;
 
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
@@ -6533,11 +6533,8 @@ type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new tsProtoGlobalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
-  }
-  return long.toNumber();
+function longToBigint(long: Long) {
+  return BigInt(long.toString());
 }
 
 if (_m0.util.Long !== Long) {

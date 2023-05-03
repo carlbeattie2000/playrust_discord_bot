@@ -1,8 +1,8 @@
-import WebSocket, { MessageEvent } from 'ws'
+import WebSocket from 'ws'
 import { Buffer } from 'node:buffer';
 import { EventEmitter } from "events";
 
-import { AppMessage, AppRequest } from '../static/rustplus.proto';
+import { AppMessage, AppPromoteToLeader, AppRequest } from '../static/rustplus.proto';
 import { MessageRequestData } from '../interfaces/rustplus';
 
 class RustPlus extends EventEmitter {
@@ -39,23 +39,30 @@ class RustPlus extends EventEmitter {
             this.disconnect();
         }
 
-        const rustServerAddress = this.useFacepuncProxy ? `wss://companion-rust.facepunch.com/game/${this.server_ip}/${this.port}` : `wss://${this.server_ip}:${this.port}`;
+        this.emit('connecting');
+
+        const rustServerAddress = this.useFacepuncProxy ? `wss://companion-rust.facepunch.com/game/${this.server_ip}/${this.port}` : `ws://${this.server_ip}:${this.port}`;
 
         this.websocket = new WebSocket(rustServerAddress);
-        this.websocket.binaryType = 'arraybuffer';
 
         this.websocket.on('open', () => {
             this.emit('connected');
         })
 
-        this.websocket.on('message', (event: MessageEvent) => {
-            const messageBuffer = Buffer.from(event.data as string);
+        this.websocket.on('error', (e) => {
+            this.emit('error', e);
+        })
+
+        this.websocket.on('message', (event) => {
+            const messageBuffer = Buffer.from(event  as Uint8Array);
             const message = AppMessage.decode(messageBuffer);
 
             if (message.response && message.response.seq && this.seqCallbacks[message.response.seq]) {
                 const callback = this.seqCallbacks[message.response.seq];
 
                 const result = callback(message);
+
+                delete this.seqCallbacks[message.response.seq];
 
                 if (result) return;
             }
@@ -84,20 +91,24 @@ class RustPlus extends EventEmitter {
     sendRequest(data: MessageRequestData, callback: Function) {
         if (data === null || this.websocket === null) return;
 
-        let currentSeq = ++this.seq;
+        const currentSeq: number = ++this.seq;
 
         if (callback) {
             this.seqCallbacks[currentSeq] = callback;
         }
 
-        const request = AppRequest.fromJSON({
+        const request = AppRequest.fromPartial({
             seq: currentSeq,
-            playerId: this.playerId,
-            playerToken: this.playerToken,
-            ...data,
-        })
+            entityId: 0,
+            playerId: BigInt(this.playerId),
+            playerToken: parseInt(this.playerToken, 10),
+            ...data
+        });
 
-        this.websocket.send(AppRequest.encode(request).finish())
+        const encoded = AppRequest.encode(request).finish();
+
+        console.log(AppRequest.decode(encoded));
+        this.websocket.send(AppRequest.encode(request).finish());
 
         this.emit('request', request);
     }
@@ -120,7 +131,7 @@ class RustPlus extends EventEmitter {
         })
     }
 
-    setEntityValue(entityId: string, value: number | boolean, callback: Function) {
+    setEntityValue(entityId: number, value: boolean, callback: Function = () => {}) {
        this.sendRequest({
             entityId,
             setEntityValue: {
@@ -129,54 +140,54 @@ class RustPlus extends EventEmitter {
        }, callback);
     }
 
-    turnSmartSwitchOn(entityId: string, callback: Function) {
+    turnSmartSwitchOn(entityId: number, callback: Function = () => {}) {
         this.setEntityValue(entityId, true, callback);
     }
 
-    turnSmartSwitchOff(entityId: string, callback: Function) {
+    turnSmartSwitchOff(entityId: number, callback: Function = () => {}) {
         this.setEntityValue(entityId, false, callback);
     }
 
-    sendTeamMessage(message: string, callback: Function) {
+    sendTeamMessage(message: string, callback: Function = () => {}) {
         this.sendRequest({
             sendTeamMessage: {
-                message,
+                message: message,
             }
         }, callback);
     }
 
-    getEntityInfo(entityId: string, callback: Function) {
+    getEntityInfo(entityId: number, callback: Function = () => {}) {
         this.sendRequest({
             entityId,
             getEntityInfo: {}
         }, callback);
     }
 
-    getMap(callback: Function) {
+    getMap(callback: Function = () => {}) {
         this.sendRequest({
             getMap: {}
         }, callback);
     }
 
-    getTime(callback: Function) {
+    getTime(callback: Function = () => {}) {
         this.sendRequest({
             getTime: {}
         }, callback);
     }
 
-    getMapMarkers(callback: Function) {
+    getMapMarkers(callback: Function = () => {}) {
         this.sendRequest({
             getMapMarkers: {}
         }, callback);
     }
 
-    getInfo(callback: Function) {
+    getInfo(callback: Function = () => {}) {
         this.sendRequest({
             getInfo: {}
         }, callback);
     }
 
-    getTeamInfo(callback: Function) {
+    getTeamInfo(callback: Function = () => {}) {
         this.sendRequest({
             getTeamInfo: {}
         }, callback)

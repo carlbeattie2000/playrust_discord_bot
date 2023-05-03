@@ -1,4 +1,4 @@
-import PairedServer from '../interfaces/pairedServer';
+import { PairedServer, PairedServersConfig } from '../interfaces/pairedServer';
 import { Client, TextChannel } from "discord.js";
 import AuthConfig from "../interfaces/authConfig";
 import rust_plus_auth from "./rust_plus_auth";
@@ -47,8 +47,6 @@ async function fcmListen(client: Client) {
         console.log(body);
 
     })
-
-    console.log('Rust+ connected!')
 }
 
 function savePairedServer(pairedServer: PairedServer) {
