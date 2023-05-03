@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+import { join } from 'path';
 import discord_channel_helper from './discord_channel_helper';
 
 const PORT = 4089;
@@ -28,10 +29,11 @@ class ConfigService {
         this.app = express();
 
         this.app.get('/', (_: Request, res: Response) => {
-            res.send('<h1>Config</h1>');
+            res.sendFile(join(process.cwd(), 'public', 'config_ui', 'dist/index.html'));
         })
 
         this.app.use(express.json());
+        this.app.use(express.static(join(process.cwd(), 'public')))
 
         this.server = this.app.listen(PORT, () => {
             this.onReady();
