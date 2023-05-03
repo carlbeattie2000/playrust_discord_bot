@@ -4,7 +4,7 @@ import PairedServerCard from "../components/PairedServer";
 
 export default function PairedServers() {
     async function getPairedServersList(): Promise<PairedServersConfig | undefined> {
-        const request = await fetch('/paired_servers');
+        const request = await fetch('/api/paired_servers');
 
         if (request.status === 404) return undefined;
 
