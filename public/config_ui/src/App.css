@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 10vw;
+    padding: 1.5rem;
+}
+
+.sidebar_links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebar_links > a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    border: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    background-color: #cd412b;
+    color: #fdfdfd;
+    padding: 1rem 1.25rem;
+    font-size: 1.5rem;
+    text-decoration: none;
+    font-weight: 800;
+    transition: background-color .2s ease;
+}
+
+.sidebar_links > a:hover {
+    background-color: #b83a27;
+}
+
+.title_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+}
+
+.title_container > .title {
+    color: #fdfdfd;
+    font-size: 4rem;
+    font-weight: 800;
+}
