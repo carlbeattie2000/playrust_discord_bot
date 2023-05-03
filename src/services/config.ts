@@ -29,7 +29,7 @@ class ConfigService {
         this.app = express();
 
         this.app.get('/', (_: Request, res: Response) => {
-            res.sendFile(join(process.cwd(), 'public', 'config_ui', 'dist/index.html'));
+            res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
         })
 
         this.app.use(express.json());
