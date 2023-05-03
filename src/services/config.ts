@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import { join } from 'path';
 import discord_channel_helper from './discord_channel_helper';
+import { loadPairedServers } from './rust_plus_pairing'
 
 const PORT = 4089;
 const TIMEOUT_DELAY_MS = 60000;
@@ -30,6 +31,24 @@ class ConfigService {
 
         this.app.get('/', (_: Request, res: Response) => {
             res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
+        })
+
+        this.app.get('/paired_servers', (_: Request, res: Response) => {
+            res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
+        })
+
+        this.app.get('/discord', (_: Request, res: Response) => {
+            res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
+        })
+
+        this.app.get('/api/paired_servers', (_: Request, res: Response) => {
+            const pairedServers = loadPairedServers();
+
+            if (!pairedServers) {
+                return res.sendStatus(404);
+            }
+
+            return res.json(pairedServers);
         })
 
         this.app.use(express.json());

@@ -1,4 +1,4 @@
-export default function paired_server() {
+export default function Discord() {
     return (
         <div className="paired_server_page">
             <p>Discord</p>

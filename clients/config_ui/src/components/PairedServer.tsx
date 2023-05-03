@@ -1,10 +1,10 @@
 import { PairedServer } from '../interfaces/pairedServers';
 
-export default function PairedServerCard(pairedServer: PairedServer) {
+export default function PairedServerCard({ ip, port, name }: PairedServer) {
     return (
         <div className='pairedServerCard'>
-            <p className='name'>{pairedServer.name}</p>
-            <p className='connect'>client.connect {pairedServer.ip}:{pairedServer.port}</p>
+            <p className='name'>{name}</p>
+            <p className='connect'>client.connect {ip}:{port}</p>
         </div>
     )
 }
