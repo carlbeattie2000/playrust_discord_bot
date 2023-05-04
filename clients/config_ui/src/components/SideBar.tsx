@@ -7,6 +7,7 @@ export default function SideBar() {
             <div className="sidebar_links">
                 <a href="/paired_servers">Paired Servers</a>
                 <a href="/discord">Discord</a>
+                <a href="/entities">Entities</a>
             </div>
         </div>
     )

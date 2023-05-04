@@ -1,7 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import { join } from 'path';
 import discord_channel_helper from './discord_channel_helper';
-import { loadPairedServers } from './rust_plus_pairing'
+import { loadPairedServers, unpairServer } from './rust_plus_pairing'
+import { rustPlusSocketUnpair } from './rust_plus_events';
 
 const PORT = 4089;
 const TIMEOUT_DELAY_MS = 60000;
@@ -49,6 +50,18 @@ class ConfigService {
             }
 
             return res.json(pairedServers);
+        })
+
+        this.app.post('/api/unpair_server', (req: Request, res: Response) => {
+            const { id } = req.query;
+
+            if (unpairServer(id as string)) {
+                rustPlusSocketUnpair(id as string);
+
+                return res.sendStatus(204)
+            }
+
+            return res.sendStatus(404);
         })
 
         this.app.use(express.json());

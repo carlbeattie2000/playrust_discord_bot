@@ -6,6 +6,8 @@ export default function PairedServers() {
     async function getPairedServersList(): Promise<PairedServersConfig | undefined> {
         const request = await fetch('/api/paired_servers');
 
+        console.log(request.status)
+
         if (request.status === 404) return undefined;
 
         const response = await request.json();
@@ -19,7 +21,9 @@ export default function PairedServers() {
         (async () => {
             const servers = await getPairedServersList()
 
-            if (!servers) return;
+            if (!servers) {
+                return;
+            };
 
             setPairedServers(servers.servers);
         })();
@@ -28,11 +32,13 @@ export default function PairedServers() {
 
     return (
         <div className="paired_server_page">
-            <p>Paired servers</p>
+            <p className="title">Paired servers</p>
 
-            {pairedServers.map((server) => {
-                return <PairedServerCard ip={server.ip} port={server.port} name={server.name} id={server.id} playerId={server.playerId} playerToken={server.playerToken}  />
-            })}
+            <div className="pairedServers">
+                {pairedServers.map((server) => {
+                    return <PairedServerCard ip={server.ip} port={server.port} name={server.name} id={server.id} playerId={server.playerId} playerToken={server.playerToken}  />
+                })}
+            </div>
         </div>
     )
 }

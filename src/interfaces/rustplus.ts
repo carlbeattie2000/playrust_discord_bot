@@ -1,3 +1,4 @@
+import RustPlus from '../services/rust_plus';
 import { AppSetEntityValue, AppSendMessage, AppEmpty } from '../static/rustplus.proto';
 
 export interface MessageRequestData {
@@ -10,4 +11,9 @@ export interface MessageRequestData {
     getMapMarkers?: AppEmpty | undefined,
     getInfo?: AppEmpty | undefined,
     getTeamInfo?: AppEmpty | undefined
+}
+
+export interface SocketConnection {
+    serverId: string,
+    connection: RustPlus
 }

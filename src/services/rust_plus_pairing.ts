@@ -75,6 +75,14 @@ function savePairedServer(pairedServer: PairedServer) {
     writeFileSync(saveFilePath, JSON.stringify(savedServers));
 }
 
+function updatePairedServerFile(configData: PairedServersConfig) {
+    if (!configData) return;
+
+    const saveFilePath = join(process.cwd(), 'priv/paired_servers.json');
+
+    writeFileSync(saveFilePath, JSON.stringify(configData));
+}
+
 function savePersistentId(id: string) {
     const saveFilePath = join(process.cwd(), 'priv/paired_servers.json');
 
@@ -107,6 +115,22 @@ export function loadPairedServers(): PairedServersConfig | undefined {
     }
 
     return undefined;
+}
+
+export function unpairServer(id: string): boolean {
+    const pairedServers = loadPairedServers();
+
+    if (!pairedServers) return false;
+
+    const serverToRemove = pairedServers.servers.find((server) => server.id === id);
+
+    if (!serverToRemove) return false;
+
+    pairedServers.servers = pairedServers.servers.filter((server) => server.id !== id);
+
+    updatePairedServerFile(pairedServers);
+
+    return true;
 }
 
 export default fcmListen

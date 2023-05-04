@@ -9,6 +9,7 @@ import './index.css'
 import App from './App';
 import PairedServers from './pages/PairedServers';
 import Discord from './pages/Discord';
+import SideBar from './components/SideBar';
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,20 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <>
+        <main className='container'>
+            <SideBar />
+
+             <div className='page'>
+                <div className='title_container'>
+                    <p className='title'>RustPlusBot Config</p>
+                </div>
+
+                <section className='pageContainer'>
+                    <RouterProvider router={router} />
+                </section>
+            </div>
+        </main>
+    </>
   </React.StrictMode>,
 )
