@@ -136,7 +136,7 @@ export function unpairServer(id: string): boolean {
     return true;
 }
 
-function loadSavedEntities(): EntityFile | undefined {
+export function loadSavedEntities(): EntityFile | undefined {
     const filePath = join(process.cwd(), 'priv/paired_entities.json');
 
     if (!existsSync(filePath)) return;

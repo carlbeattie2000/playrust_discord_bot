@@ -9,6 +9,7 @@ import './index.css'
 import App from './App';
 import PairedServers from './pages/PairedServers';
 import Discord from './pages/Discord';
+import PairedEntities from './pages/PairedEntities';
 import SideBar from './components/SideBar';
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     {
         path: '/discord',
         element: <Discord />
+    },
+    {
+        path: '/paired_entities',
+        element: <PairedEntities />
     }
 ]);
 

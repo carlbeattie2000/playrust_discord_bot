@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import { join } from 'path';
 import discord_channel_helper from './discord_channel_helper';
-import { loadPairedServers, unpairServer } from './rust_plus_pairing'
+import { loadPairedServers, unpairServer, loadSavedEntities } from './rust_plus_pairing'
 import { rustPlusSocketUnpair } from './rust_plus_events';
 
 const PORT = 4089;
@@ -28,13 +28,17 @@ class ConfigService {
     async start() {
         if (this.server) this.stop();
 
-        this.app = express();
+       this.app = express();
 
         this.app.get('/', (_: Request, res: Response) => {
             res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
         })
 
         this.app.get('/paired_servers', (_: Request, res: Response) => {
+            res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
+        })
+
+        this.app.get('/paired_entities', (_: Request, res: Response) => {
             res.sendFile(join(process.cwd(), 'public', 'config_ui', 'index.html'));
         })
 
@@ -62,6 +66,17 @@ class ConfigService {
             }
 
             return res.sendStatus(404);
+        })
+
+
+        this.app.get('/api/paired_entities', (_: Request, res: Response) => {
+            const pairedEntities = loadSavedEntities();
+
+            if (!pairedEntities) {
+                return res.sendStatus(404);
+            }
+
+            return res.json(pairedEntities);
         })
 
         this.app.use(express.json());
