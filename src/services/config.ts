@@ -79,6 +79,14 @@ class ConfigService {
             return res.json(pairedEntities);
         })
 
+        this.app.get('/api/discord_channels', (_: Request, res: Response) => {
+            const discordChannels = discord_channel_helper.loadChannelFile();
+
+            if (!discordChannels) return res.sendStatus(404);
+
+            return res.json(discordChannels);
+        })
+
         this.app.use(express.json());
         this.app.use(express.static(join(process.cwd(), 'public')))
 
