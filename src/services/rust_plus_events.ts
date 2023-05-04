@@ -12,7 +12,11 @@ export function loadRustPlusSocket(): boolean {
 
     let pairedRustServer: PairedServersConfig | undefined = loadPairedServers();
 
-    if (pairedRustServer === undefined) return false;
+    if (pairedRustServer === undefined) {
+        loadingSocket = false;
+
+        return false;
+    };
 
     for (const server of pairedRustServer.servers) {
         const rustPlusConnection = new RustPlus(server.ip,
@@ -25,8 +29,6 @@ export function loadRustPlusSocket(): boolean {
 
         rustPlusConnection.on('connected', () => {
             console.log('Connected to server:', server.name);
-
-            loadingSocket = false;
 
             rustPlusConnection.sendTeamMessage('[BOT]: CarlsRustBotConnected');
         })
@@ -49,6 +51,8 @@ export function loadRustPlusSocket(): boolean {
             serverId: server.id,
             connection: rustPlusConnection
         })
+
+        loadingSocket = false;
     }
 
     console.log('Connected to', pairedRustServer.servers.length, 'servers.');
