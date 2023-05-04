@@ -1,4 +1,4 @@
-import { PairedServersConfig } from '../interfaces/pairedServer';
+import { PairedServer, PairedServersConfig } from '../interfaces/pairedServer';
 import { SocketConnection } from '../interfaces/rustplus';
 
 import RustPlus from './rust_plus';
@@ -7,52 +7,54 @@ import { loadPairedServers } from './rust_plus_pairing';
 let rustPlusSocketConnections: SocketConnection[] = [];
 let loadingSocket = false;
 
-export function loadRustPlusSocket(): boolean {
+export function connectToSocket(server: PairedServer) {
     loadingSocket = true;
 
+    const rustPlusConnection = new RustPlus(server.ip,
+                                            server.port, server.playerId,
+    server.playerToken);
+
+    rustPlusConnection.on('connecting', () => {
+        console.log('Connecting to server:', server.name);
+    })
+
+    rustPlusConnection.on('connected', () => {
+        console.log('Connected to server:', server.name);
+
+        rustPlusConnection.sendTeamMessage('[BOT]: CarlsRustBotConnected');
+    })
+
+    rustPlusConnection.on('message', (message) => {
+        console.log('Message from:', server.name.slice(0, 18), ':', message);
+    })
+
+    rustPlusConnection.on('error', (error) => {
+        console.log('Socket error for server:', server.name, 'Error:', error);
+    })
+
+    rustPlusConnection.on('disconnected', () => {
+        console.log('Disconnected from:', server.name);
+    })
+
+    rustPlusConnection.connect();
+
+    rustPlusSocketConnections.push({
+        serverId: server.id,
+        connection: rustPlusConnection
+    })
+
+    loadingSocket = false;
+}
+
+export function loadRustPlusSocket(): boolean {
     let pairedRustServer: PairedServersConfig | undefined = loadPairedServers();
 
     if (pairedRustServer === undefined) {
-        loadingSocket = false;
-
         return false;
     };
 
     for (const server of pairedRustServer.servers) {
-        const rustPlusConnection = new RustPlus(server.ip,
-                                                server.port, server.playerId,
-        server.playerToken);
-
-        rustPlusConnection.on('connecting', () => {
-            console.log('Connecting to server:', server.name);
-        })
-
-        rustPlusConnection.on('connected', () => {
-            console.log('Connected to server:', server.name);
-
-            rustPlusConnection.sendTeamMessage('[BOT]: CarlsRustBotConnected');
-        })
-
-        rustPlusConnection.on('message', (message) => {
-            console.log('Message from:', server.name.slice(0, 18), ':', message);
-        })
-
-        rustPlusConnection.on('error', (error) => {
-            console.log('Socket error for server:', server.name, 'Error:', error);
-        })
-
-        rustPlusConnection.on('disconnected', () => {
-            console.log('Disconnected from:', server.name);
-        })
-
-        rustPlusConnection.connect();
-
-        rustPlusSocketConnections.push({
-            serverId: server.id,
-            connection: rustPlusConnection
-        })
-
-        loadingSocket = false;
+        connectToSocket(server);
     }
 
     console.log('Connected to', pairedRustServer.servers.length, 'servers.');

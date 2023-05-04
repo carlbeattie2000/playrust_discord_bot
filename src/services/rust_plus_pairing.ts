@@ -9,6 +9,7 @@ import { Client } from "discord.js";
 import rust_plus_auth from "./rust_plus_auth";
 import discord_channel_helper from './discord_channel_helper';
 import { Entity, EntityFile } from '../interfaces/rustplus';
+import { connectToSocket } from './rust_plus_events';
 
 function onFcmMessage(client: Client, { notification, persistentId }: any) {
     if (notificationIdExists(persistentId)) return;
@@ -19,6 +20,7 @@ function onFcmMessage(client: Client, { notification, persistentId }: any) {
 
     if (body.type === 'server') {
         savePairedServer(body);
+        connectToSocket(body);
 
         msg = `Discord paired with server: ${body.name}`;
     }
