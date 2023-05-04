@@ -8,6 +8,7 @@ import { Client } from "discord.js";
 
 import rust_plus_auth from "./rust_plus_auth";
 import discord_channel_helper from './discord_channel_helper';
+import { Entity, EntityFile } from '../interfaces/rustplus';
 
 function onFcmMessage(client: Client, { notification, persistentId }: any) {
     if (notificationIdExists(persistentId)) return;
@@ -24,6 +25,8 @@ function onFcmMessage(client: Client, { notification, persistentId }: any) {
 
     if (body.type === 'entity') {
         msg = `Discord paired with: ${body.entityName}`;
+
+        pairEntity(body);
     }
 
     if (msg === '') return;
@@ -131,6 +134,54 @@ export function unpairServer(id: string): boolean {
     updatePairedServerFile(pairedServers);
 
     return true;
+}
+
+function loadSavedEntities(): EntityFile | undefined {
+    const filePath = join(process.cwd(), 'priv/paired_entities.json');
+
+    if (!existsSync(filePath)) return;
+
+    const entites = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+    return entites;
+}
+
+function entityAlreadyPaired(id: string, savedEntites: EntityFile | undefined): boolean {
+    if (savedEntites) {
+        return savedEntites.entities.find((entity) => entity.entityId === id) !== undefined;
+    }
+
+    return false;
+}
+
+function saveEntityToFile(entity: Entity) {
+    const fileSavePath = join(process.cwd(), 'priv/paired_entities.json');
+
+    const savedEntites = loadSavedEntities();
+
+    if (!savedEntites) {
+        return writeFileSync(fileSavePath, JSON.stringify({ 'entities': [entity] }));
+    }
+
+    if (entityAlreadyPaired(entity.entityId, savedEntites)) {
+        return;
+    }
+
+    savedEntites.entities.push(entity);
+
+    writeFileSync(fileSavePath, JSON.stringify(savedEntites));
+}
+
+function pairEntity(entity: Entity) {
+    saveEntityToFile(entity);
+}
+
+export function getEntityById(entityId: string): Entity | undefined {
+    const savedEntities = loadSavedEntities();
+
+    if (!savedEntities) return;
+
+    return savedEntities.entities.find((entity) => entity.entityId === entityId);
 }
 
 export default fcmListen

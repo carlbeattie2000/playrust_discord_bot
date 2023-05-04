@@ -17,3 +17,14 @@ export interface SocketConnection {
     serverId: string,
     connection: RustPlus
 }
+
+export interface EntityFile {
+    entities: Entity[]
+}
+
+export interface Entity {
+    entityType: string,
+    entityId: string,
+    entityName: string,
+    id: string,
+}
