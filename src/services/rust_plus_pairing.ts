@@ -36,9 +36,6 @@ function onFcmMessage(client: Client, { notification, persistentId }: any) {
     discord_channel_helper.sendMessage('general', msg);
 
     savePersistentId(persistentId);
-
-    console.log(body);
-
 }
 
 async function fcmListen(client: Client) {
