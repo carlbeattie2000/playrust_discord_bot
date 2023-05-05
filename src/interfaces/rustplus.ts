@@ -1,5 +1,5 @@
 import RustPlus from '../services/rust_plus';
-import { AppSetEntityValue, AppSendMessage, AppEmpty } from '../static/rustplus.proto';
+import { AppSetEntityValue, AppSendMessage, AppEmpty, AppMessage } from '../static/rustplus.proto';
 
 export interface MessageRequestData {
     entityId?: number,
@@ -27,4 +27,16 @@ export interface Entity {
     entityId: string,
     entityName: string,
     id: string,
+}
+
+export interface ChatCommand {
+    command: string,
+    onRun(rustPlusConnection: RustPlus, args: string[]): void,
+    onMessage(rustPlusConnection: RustPlus, message: AppMessage): void
+}
+
+export interface ChatCommandKeyV {
+    [command: string]: {
+        onRun(rustPlusConnection: RustPlus, args: string[]): void,
+    }
 }

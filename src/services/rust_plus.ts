@@ -2,8 +2,8 @@ import WebSocket from 'ws'
 import { Buffer } from 'node:buffer';
 import { EventEmitter } from "events";
 
-import { AppMessage, AppPromoteToLeader, AppRequest } from '../static/rustplus.proto';
-import { MessageRequestData } from '../interfaces/rustplus';
+import { AppMessage, AppNewTeamMessage, AppPromoteToLeader, AppRequest, AppTeamMessage } from '../static/rustplus.proto';
+import { ChatCommand, ChatCommandKeyV, MessageRequestData } from '../interfaces/rustplus';
 
 class RustPlus extends EventEmitter {
     private server_ip: string;
@@ -17,8 +17,10 @@ class RustPlus extends EventEmitter {
 
 
     private websocket: WebSocket | null;
+    private chatCommands: ChatCommandKeyV;
 
-    constructor(server_ip: string, port: string, playerId: string, playerToken: string, useFacepuncProxy: boolean = false) {
+    constructor(server_ip: string, port: string, playerId: string,
+                playerToken: string, useFacepuncProxy: boolean = false) {
         super();
 
         this.server_ip = server_ip;
@@ -32,6 +34,8 @@ class RustPlus extends EventEmitter {
 
         this.websocket = null;
 
+        this.chatCommands = {};
+
     }
 
     connect() {
@@ -41,7 +45,9 @@ class RustPlus extends EventEmitter {
 
         this.emit('connecting');
 
-        const rustServerAddress = this.useFacepuncProxy ? `wss://companion-rust.facepunch.com/game/${this.server_ip}/${this.port}` : `ws://${this.server_ip}:${this.port}`;
+        const rustServerAddress = this.useFacepuncProxy ?
+            `wss://companion-rust.facepunch.com/game/${this.server_ip}/${this.port}`
+                : `ws://${this.server_ip}:${this.port}`;
 
         this.websocket = new WebSocket(rustServerAddress);
 
@@ -57,7 +63,8 @@ class RustPlus extends EventEmitter {
             const messageBuffer = Buffer.from(event  as Uint8Array);
             const message = AppMessage.decode(messageBuffer);
 
-            if (message.response && message.response.seq && this.seqCallbacks[message.response.seq]) {
+            if (message.response && message.response.seq
+                && this.seqCallbacks[message.response.seq]) {
                 const callback = this.seqCallbacks[message.response.seq];
 
                 const result = callback(message);
@@ -65,6 +72,10 @@ class RustPlus extends EventEmitter {
                 delete this.seqCallbacks[message.response.seq];
 
                 if (result) return;
+            }
+
+            if (message.broadcast && message.broadcast.teamMessage) {
+                this.onTeamMessage(message.broadcast.teamMessage);
             }
 
             this.emit('message', message);
@@ -81,6 +92,32 @@ class RustPlus extends EventEmitter {
             this.websocket.terminate();
 
             this.websocket = null;
+        }
+    }
+
+    onTeamMessage(teamMessage: AppNewTeamMessage) {
+        if (teamMessage.message?.message) {
+            const args = teamMessage.message.message.split(' ');
+
+            if (args === undefined) return;
+
+            if (args.length > 0 &&
+                Object.prototype.hasOwnProperty.call(
+                    this.chatCommands, args[0])) {
+                this.chatCommands[args[0]].onRun(this, args);
+            }
+        }
+    }
+
+    registerChatCommands(commands: ChatCommand[]) {
+        for (const command of commands) {
+            this.on('message', (message) => {
+                command.onMessage(this, message);
+            })
+
+            this.chatCommands[command.command] = {
+                onRun: command.onRun,
+            }
         }
     }
 
@@ -105,15 +142,13 @@ class RustPlus extends EventEmitter {
             ...data
         });
 
-        const encoded = AppRequest.encode(request).finish();
-
-        console.log(AppRequest.decode(encoded));
         this.websocket.send(AppRequest.encode(request).finish());
 
         this.emit('request', request);
     }
 
-    sendRequestAsync(data: MessageRequestData, timeoutMilliseconds: number = 10000) {
+    sendRequestAsync(data: MessageRequestData,
+                     timeoutMilliseconds: number = 10000) {
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
                 reject(new Error('Timeout reached while waiting for response'));
@@ -131,7 +166,8 @@ class RustPlus extends EventEmitter {
         })
     }
 
-    setEntityValue(entityId: number, value: boolean, callback: Function = () => {}) {
+    setEntityValue(entityId: number, value: boolean,
+                   callback: Function = () => {}) {
        this.sendRequest({
             entityId,
             setEntityValue: {
