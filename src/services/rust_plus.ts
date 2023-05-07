@@ -84,7 +84,7 @@ class RustPlus extends EventEmitter {
             }
 
             if (message.response && message.response.info && this.mapSize === 0) {
-                this.mapSize = Math.ceil(message.response.info.mapSize / this.gridSize);
+                this.mapSize = message.response.info.mapSize / this.gridSize;
             }
 
             if (message.response && message.response.teamInfo) {
@@ -126,7 +126,7 @@ class RustPlus extends EventEmitter {
 
                 const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
-                this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(this.mapSize - y) - 1}.`);
+                this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(Math.floor(this.mapSize - y)) - 1}.`);
                 this.teamStatus[member.name].dead = true;
             }
 
