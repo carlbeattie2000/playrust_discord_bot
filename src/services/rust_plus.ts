@@ -109,17 +109,15 @@ class RustPlus extends EventEmitter {
     }
 
     onCheckForTeamDeath(teamInfo: AppTeamInfo) {
-        const dateNow = new Date();
-
         for (const member of teamInfo.members) {
+            if (!member.isOnline) {
+                continue;
+            }
+
             if (!Object.prototype.hasOwnProperty.call(this.teamStatus, member.name)) {
                 this.teamStatus[member.name] = {
                     dead: false,
                 }
-            }
-
-            if (!member.isOnline) {
-                continue;
             }
 
             if (member.isAlive === false && member.isOnline && !this.teamStatus[member.name].dead) {
@@ -130,7 +128,6 @@ class RustPlus extends EventEmitter {
 
                 this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(this.mapSize - y) - 1}.`);
                 this.teamStatus[member.name].dead = true;
-                this.teamStatus[member.name];
             }
 
             if (member.isAlive && this.teamStatus[member.name]?.dead) {
