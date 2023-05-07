@@ -70,7 +70,7 @@ class RustPlus extends EventEmitter {
                 && this.seqCallbacks[message.response.seq]) {
                 const callback = this.seqCallbacks[message.response.seq];
 
-                const result = callback(message);
+                const result = callback(this, message);
 
                 delete this.seqCallbacks[message.response.seq];
 
@@ -151,20 +151,17 @@ class RustPlus extends EventEmitter {
             if (args.length > 0 &&
                 Object.prototype.hasOwnProperty.call(
                     this.chatCommands, args[0])) {
-                this.chatCommands[args[0]].onRun(this, args);
+                this.chatCommands[args[0]].onRun(this, args, this.chatCommands[args[0]].onMessage);
             }
         }
     }
 
     registerChatCommands(commands: ChatCommand[]) {
         for (const command of commands) {
-            this.on('message', (message) => {
-                command.onMessage(this, message);
-            })
-
             this.chatCommands[command.command] = {
                 onRun: command.onRun,
-            }
+                onMessage: command.onMessage
+           }
         }
     }
 

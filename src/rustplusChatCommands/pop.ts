@@ -2,8 +2,8 @@ import { ChatCommand } from "../interfaces/rustplus";
 
 export const pop: ChatCommand = {
     command: '!pop',
-    onRun: (rustPlus, _) => {
-        rustPlus.getInfo()
+    onRun: (rustPlus, _, cb) => {
+        rustPlus.getInfo(cb)
     },
     onMessage: (rustPlus, message) => {
         if (message.response && message.response.info) {

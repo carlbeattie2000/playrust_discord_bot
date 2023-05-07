@@ -31,13 +31,14 @@ export interface Entity {
 
 export interface ChatCommand {
     command: string,
-    onRun(rustPlusConnection: RustPlus, args: string[]): void,
+    onRun(rustPlusConnection: RustPlus, args: string[], cb: Function | undefined): void,
     onMessage(rustPlusConnection: RustPlus, message: AppMessage): void
 }
 
 export interface ChatCommandKeyV {
     [command: string]: {
-        onRun(rustPlusConnection: RustPlus, args: string[]): void,
+        onRun(rustPlusConnection: RustPlus, args: string[], cb: Function | undefined): void,
+        onMessage(rustPlusConnection: RustPlus, message: AppMessage): void
     }
 }
 

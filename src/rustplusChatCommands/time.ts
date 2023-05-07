@@ -2,8 +2,8 @@ import { ChatCommand } from "../interfaces/rustplus";
 
 export const time: ChatCommand = {
     command: '!time',
-    onRun: (rustplus, message) => {
-        rustplus.getTime();
+    onRun: (rustplus, message, cb) => {
+        rustplus.getTime(cb);
     },
     onMessage: (rustplus, message) => {
         if (message.response && message.response.time) {
