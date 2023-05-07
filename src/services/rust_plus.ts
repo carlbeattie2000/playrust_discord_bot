@@ -2,8 +2,8 @@ import WebSocket from 'ws'
 import { Buffer } from 'node:buffer';
 import { EventEmitter } from "events";
 
-import { AppMessage, AppNewTeamMessage, AppPromoteToLeader, AppRequest, AppTeamMessage } from '../static/rustplus.proto';
-import { ChatCommand, ChatCommandKeyV, MessageRequestData } from '../interfaces/rustplus';
+import { AppMessage, AppNewTeamMessage, AppPromoteToLeader, AppRequest, AppTeamInfo, AppTeamMessage } from '../static/rustplus.proto';
+import { ChatCommand, ChatCommandKeyV, MessageRequestData, TeamMemberStatus } from '../interfaces/rustplus';
 
 class RustPlus extends EventEmitter {
     private server_ip: string;
@@ -18,6 +18,8 @@ class RustPlus extends EventEmitter {
 
     private websocket: WebSocket | null;
     private chatCommands: ChatCommandKeyV;
+    private teamStatus: TeamMemberStatus;
+    private mapSize: number;
 
     constructor(server_ip: string, port: string, playerId: string,
                 playerToken: string, useFacepuncProxy: boolean = false) {
@@ -35,7 +37,8 @@ class RustPlus extends EventEmitter {
         this.websocket = null;
 
         this.chatCommands = {};
-
+        this.teamStatus = {};
+        this.mapSize = 0;
     }
 
     connect() {
@@ -78,6 +81,14 @@ class RustPlus extends EventEmitter {
                 this.onTeamMessage(message.broadcast.teamMessage);
             }
 
+            if (message.response && message.response.info && this.mapSize === 0) {
+                this.mapSize = Math.ceil(message.response.info.mapSize / 150);
+            }
+
+            if (message.response && message.response.teamInfo) {
+                this.onCheckForTeamDeath(message.response.teamInfo);
+            }
+
             this.emit('message', message);
 
         })
@@ -92,6 +103,42 @@ class RustPlus extends EventEmitter {
             this.websocket.terminate();
 
             this.websocket = null;
+        }
+    }
+
+    onCheckForTeamDeath(teamInfo: AppTeamInfo) {
+        const dateNow = new Date();
+
+        for (const member of teamInfo.members) {
+            if (!Object.prototype.hasOwnProperty.call(this.teamStatus, member.name)) {
+                this.teamStatus[member.name] = {
+                    dead: false,
+                }
+            }
+
+            if (!member.isOnline) {
+                continue;
+            }
+
+            if (member.isAlive === false && member.isOnline && !this.teamStatus[member.name].dead) {
+                if (dateNow.getTime() - member.deathTime > (1000 * 5)) {
+                    const grid: number = 150;
+
+                    const x: number = Math.floor(member.x / grid);
+                    const y: number = Math.floor(member.y / grid);
+
+                    const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+
+                    this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(this.mapSize - y) - 1}.`);
+                    this.teamStatus[member.name].dead = true;
+                    this.teamStatus[member.name];
+                }
+            }
+
+            if (member.isAlive && this.teamStatus[member.name]?.dead) {
+                this.teamStatus[member.name].dead = false;
+            }
+
         }
     }
 

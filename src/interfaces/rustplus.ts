@@ -40,3 +40,9 @@ export interface ChatCommandKeyV {
         onRun(rustPlusConnection: RustPlus, args: string[]): void,
     }
 }
+
+export interface TeamMemberStatus {
+    [id: string]: {
+        dead: boolean
+    }
+}
