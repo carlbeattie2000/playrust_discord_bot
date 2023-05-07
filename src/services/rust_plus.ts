@@ -124,9 +124,46 @@ class RustPlus extends EventEmitter {
                 const x: number = Math.floor(member.x / this.gridSize);
                 const y: number = Math.floor(member.y / this.gridSize);
 
+                // Temp to test out grid positions
+                const minX = (x * this.gridSize);
+                const minY = (y * this.gridSize);
+
+                const maxX = (x * this.gridSize) + this.gridSize;
+                const maxY = (y * this.gridSize) + this.gridSize;
+
+                const middleX = minX + ((maxX - minX) / 2);
+                const middleY = minY + ((maxY - minY) / 2);
+
                 const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
-                this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(Math.floor(this.mapSize - y)) - 1}.`);
+                let positionMessage = '';
+
+                if (member.x > middleX) {
+                    if (member.y > middleY) {
+                        positionMessage = 'TOP RIGHT';
+                    }
+
+                    if (member.y < middleY) {
+                        positionMessage = 'BOTTOM RIGHT';
+                    }
+                }
+
+                if (member.x < middleX) {
+                    if (member.y > middleY) {
+                        positionMessage = 'TOP LEFT';
+                    }
+
+                    if (member.y < middleY) {
+                        positionMessage = 'BOTTOM LEFT';
+                    }
+                }
+
+                if (member.x > middleX - 30 && member.x < middleX + 30
+                    && member.y > middleY - 30 && member.y < middleY + 30) {
+                    positionMessage = 'MIDDLE';
+                }
+
+                this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(Math.floor(this.mapSize - y)) - 1} ${positionMessage}.`);
                 this.teamStatus[member.name].dead = true;
             }
 
