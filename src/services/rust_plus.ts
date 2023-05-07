@@ -20,6 +20,7 @@ class RustPlus extends EventEmitter {
     private chatCommands: ChatCommandKeyV;
     private teamStatus: TeamMemberStatus;
     private mapSize: number;
+    private gridSize: number;
 
     constructor(server_ip: string, port: string, playerId: string,
                 playerToken: string, useFacepuncProxy: boolean = false) {
@@ -39,6 +40,7 @@ class RustPlus extends EventEmitter {
         this.chatCommands = {};
         this.teamStatus = {};
         this.mapSize = 0;
+        this.gridSize = 146.28571428571428;
     }
 
     connect() {
@@ -82,7 +84,7 @@ class RustPlus extends EventEmitter {
             }
 
             if (message.response && message.response.info && this.mapSize === 0) {
-                this.mapSize = Math.ceil(message.response.info.mapSize / 150);
+                this.mapSize = Math.ceil(message.response.info.mapSize / this.gridSize);
             }
 
             if (message.response && message.response.teamInfo) {
@@ -121,18 +123,14 @@ class RustPlus extends EventEmitter {
             }
 
             if (member.isAlive === false && member.isOnline && !this.teamStatus[member.name].dead) {
-                if (dateNow.getTime() - member.deathTime > (1000 * 5)) {
-                    const grid: number = 150;
+                const x: number = Math.floor(member.x / this.gridSize);
+                const y: number = Math.floor(member.y / this.gridSize);
 
-                    const x: number = Math.floor(member.x / grid);
-                    const y: number = Math.floor(member.y / grid);
+                const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
-                    const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-
-                    this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(this.mapSize - y) - 1}.`);
-                    this.teamStatus[member.name].dead = true;
-                    this.teamStatus[member.name];
-                }
+                this.sendTeamMessage(`[BOT]: ${member.name} has died @${alpha[x]}${(this.mapSize - y) - 1}.`);
+                this.teamStatus[member.name].dead = true;
+                this.teamStatus[member.name];
             }
 
             if (member.isAlive && this.teamStatus[member.name]?.dead) {
